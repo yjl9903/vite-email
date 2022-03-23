@@ -22,7 +22,7 @@ export interface RenderOutput {
 }
 
 export async function render(option: RenderOption): Promise<RenderOutput> {
-  const ctx = {};
+  const ctx: any = {};
   const output = await build(
     mergeConfig(option.vite, {
       plugins: [
@@ -37,8 +37,8 @@ export async function render(option: RenderOption): Promise<RenderOutput> {
     })
   );
 
-  // @ts-ignore
   return {
+    // @ts-ignore
     content: output.output.find((o) => o.fileName === 'index.html').source,
     subject: ctx.title
   };
