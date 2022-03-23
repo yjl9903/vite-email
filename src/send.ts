@@ -223,6 +223,10 @@ if (import.meta.vitest) {
           "name": "XLor",
           "receiver": "yjl9903@vip.qq.com",
         },
+        {
+          "name": "yjl",
+          "receiver": "yan_jl@yeah.net",
+        },
       ]
     `);
   });

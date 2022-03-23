@@ -41,7 +41,8 @@
     "release": "bumpp --commit --push --tag",
     "start": "pnpm -C example start",
     "test": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "preversion": "pnpm format && pnpm test"
   },
   "dependencies": {
     "cac": "^6.7.12",
