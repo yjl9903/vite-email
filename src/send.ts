@@ -19,73 +19,68 @@ export async function send(root: string, cliOption: CliOption) {
 
     const emailConfig = option.email;
 
-    if (emailConfig) {
-      const { createTransport } = await import('nodemailer');
+    const { createTransport } = await import('nodemailer');
 
-      const transport = createTransport(emailConfig);
+    const transport = createTransport(emailConfig);
 
-      const bar = await createProgressBar(option.receivers.length);
+    const bar = await createProgressBar(option.receivers.length);
 
-      const failList: Array<typeof option.receivers[0]> = [];
+    const failList: Array<typeof option.receivers[0]> = [];
 
-      for (const receiver of option.receivers) {
-        if (receiver !== option.receivers[0]) {
-          await sleep(emailConfig.sleep ?? 1000);
-        }
-
-        try {
-          bar.update('render', receiver.receiver);
-
-          option.frontmatter = {
-            ...emailConfig.frontmatter,
-            ...receiver
-          };
-
-          const output = await render(option);
-          const subject = receiver.subject ?? output.subject;
-          if (!subject) {
-            // handle empty subject
-            throw new Error('You should set subject in your csv or in the title of Markdown');
-          }
-
-          bar.update('send', receiver.receiver, subject);
-
-          if (emailConfig.enable) {
-            await transport.sendMail({
-              from: emailConfig.sender,
-              to: receiver.receiver,
-              subject,
-              html: output.content
-            });
-          }
-
-          bar.update('ok', receiver.receiver, subject);
-        } catch (error) {
-          console.log(
-            `${lightRed('Error')} ${(error as any).message ?? 'Unknown'} (${lightGreen(
-              receiver.receiver
-            )})`
-          );
-          failList.push(receiver);
-        }
+    for (const receiver of option.receivers) {
+      if (receiver !== option.receivers[0]) {
+        await sleep(emailConfig.sleep ?? 1000);
       }
 
-      bar.stop();
+      try {
+        bar.update('render', receiver.receiver);
 
-      if (emailConfig.enable) {
+        option.frontmatter = {
+          ...emailConfig.frontmatter,
+          ...receiver
+        };
+
+        const output = await render(option);
+        const subject = receiver.subject ?? output.subject;
+        if (!subject) {
+          // handle empty subject
+          throw new Error('You should set subject in your csv or in the title of Markdown');
+        }
+
+        bar.update('send', receiver.receiver, subject);
+
+        if (emailConfig.enable) {
+          await transport.sendMail({
+            from: emailConfig.sender,
+            to: receiver.receiver,
+            subject,
+            html: output.content
+          });
+        }
+
+        bar.update('ok', receiver.receiver, subject);
+      } catch (error) {
         console.log(
-          `${green('√')}  There are ${
-            option.receivers.length - failList.length
-          } emails has been sent successfully`
+          `${lightRed('Error')} ${(error as any).message ?? 'Unknown'} (${lightGreen(
+            receiver.receiver
+          )})`
         );
-
-        if (failList.length > 0) {
-          await writeCSV(path.join(root, 'data.error.csv'), failList);
-        }
+        failList.push(receiver);
       }
-    } else {
-      // handle empty email config
-      throw new Error('No email config found in vite.config.ts');
+    }
+
+    bar.stop();
+
+    if (emailConfig.enable) {
+      console.log(
+        `${green('√')}  There are ${
+          option.receivers.length - failList.length
+        } emails has been sent successfully`
+      );
+
+      if (failList.length > 0) {
+        await writeCSV(path.join(root, 'data.error.csv'), failList);
+      }
     }
   } finally {
     if (!existIndexHTML) {
