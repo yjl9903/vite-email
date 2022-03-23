@@ -12,6 +12,7 @@ const cli = cac();
 
 cli
   .command('[root]', 'Send Email')
+  .option('--md <template>', 'Markdown template path', { default: 'email.md' })
   .option('--no-send', 'Disable email sending')
   .option('--send [receiver]', 'Send email to receiver')
   .option('--user <user>', 'Username of your email')

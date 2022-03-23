@@ -73,4 +73,9 @@ export interface CliOption {
   user: string | undefined;
 
   pass: string | undefined;
+
+  /**
+   * @default "email.md"
+   */
+  md: string;
 }
