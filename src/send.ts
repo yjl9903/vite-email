@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { lightGreen, cyan } from 'kolorist';
+import { lightGreen, cyan, lightRed, green } from 'kolorist';
 import { loadConfigFromFile, mergeConfig } from 'vite';
 
 import { RenderOption, render } from './md';
@@ -58,38 +58,59 @@ export async function send(root: string) {
       const items = await loadCSV(path.join(root, emailConfig.csv ?? 'data.csv'));
       const bar = await createProgressBar(items.length);
 
+      const failList: any[] = [];
+
       for (const item of items) {
         if (item !== items[0]) {
           await sleep(emailConfig.sleep ?? 1000);
         }
 
-        bar.update('render', item.receiver);
+        try {
+          bar.update('render', item.receiver);
 
-        option.frontmatter = {
-          ...emailConfig.frontmatter,
-          ...item
-        };
+          option.frontmatter = {
+            ...emailConfig.frontmatter,
+            ...item
+          };
 
-        const output = await render(option);
-        const subject = item.subject ?? output.subject;
-        if (!subject) {
-          // handle empty subject
-          throw new Error('You should set subject in your csv or in the title of Markdown');
+          const output = await render(option);
+          const subject = item.subject ?? output.subject;
+          if (!subject) {
+            // handle empty subject
+            throw new Error('You should set subject in your csv or in the title of Markdown');
+          }
+
+          bar.update('send', item.receiver, subject);
+
+          await transport.sendMail({
+            from: sender,
+            to: item.receiver,
+            subject,
+            html: output.content
+          });
+
+          bar.update('ok', item.receiver, subject);
+        } catch (error) {
+          console.log(
+            `${lightRed('Error')} ${(error as any).message ?? 'Unknown'} (${lightGreen(
+              item.receiver
+            )})`
+          );
+          failList.push(item);
         }
-
-        bar.update('send', item.receiver, subject);
-
-        await transport.sendMail({
-          from: sender,
-          to: item.receiver,
-          subject,
-          html: output.content
-        });
-
-        bar.update('ok', item.receiver, subject);
       }
 
       bar.stop();
+
+      console.log(
+        `${green('√')}  There are ${
+          items.length - failList.length
+        } emails has been sent successfully`
+      );
+
+      if (failList.length > 0) {
+        await writeCSV(path.join(root, 'data.error.csv'), failList);
+      }
     } else {
       // handle empty email config
       throw new Error('No email config found in vite.config.ts');
@@ -144,7 +165,7 @@ async function createProgressBar(length: number) {
             return `   Sending email to ${lightGreen(payload.receiver)}`;
           }
         } else {
-          return ` ${spinner} ${bar} ${params.progress}/${params.total}`;
+          return ` ${spinner} ${bar} ${params.value}/${params.total}`;
         }
       },
       barsize,
@@ -186,8 +207,15 @@ async function loadCSV(filePath: string) {
   return parse(content, { columns: true, skip_empty_lines: true, trim: true });
 }
 
+async function writeCSV(filePath: string, arr: any[]) {
+  const { stringify } = await import('csv-stringify/sync');
+  const content = stringify(arr, { header: true });
+  fs.writeFileSync(filePath, content, 'utf-8');
+}
+
 if (import.meta.vitest) {
   const { it, expect } = import.meta.vitest;
+
   it('parse csv', async () => {
     expect(await loadCSV(path.join(__dirname, '../example/data.csv'))).toMatchInlineSnapshot(`
       [

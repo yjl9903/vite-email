@@ -21,7 +21,7 @@ export interface ViteEmailConfig {
 
   /**
    * Sleep time between sending
-   * 
+   *
    * @default 1000
    */
   sleep?: number;

@@ -14,6 +14,7 @@ importers:
       cac: ^6.7.12
       cli-progress: ^3.10.0
       csv-parse: ^5.0.4
+      csv-stringify: ^6.0.5
       debug: ^4.3.4
       kolorist: ^1.5.1
       markdown-it: ^12.3.2
@@ -30,6 +31,7 @@ importers:
       cac: 6.7.12
       cli-progress: 3.10.0
       csv-parse: 5.0.4
+      csv-stringify: 6.0.5
       debug: 4.3.4
       kolorist: 1.5.1
       markdown-it: 12.3.2
@@ -668,6 +670,10 @@ packages:
 
   /csv-parse/5.0.4:
     resolution: {integrity: sha512-5AIdl8l6n3iYQYxan5djB5eKDa+vBnhfWZtRpJTcrETWfVLYN0WSj3L9RwvgYt+psoO77juUr8TG8qpfGZifVQ==}
+    dev: false
+
+  /csv-stringify/6.0.5:
+    resolution: {integrity: sha512-7xpV3uweJCFF/Ssn56l3xsR/k2r3UqszwjEhej9qEn2cCPzyK1WyHCgoUVzBA792x8HbwonNX7CU9XM2K5s5yw==}
     dev: false
 
   /debug/4.3.4:
