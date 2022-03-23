@@ -1,0 +1,48 @@
+{
+  "name": "vite-plugin-email",
+  "version": "0.0.0",
+  "description": "",
+  "keywords": [],
+  "homepage": "https://github.com/yjl9903/vite-plugin-email#readme",
+  "bugs": {
+    "url": "https://github.com/yjl9903/vite-plugin-email/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yjl9903/vite-plugin-email.git"
+  },
+  "license": "MIT",
+  "author": "XLor",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "unbuild",
+    "format": "prettier --write src/**/*.ts",
+    "release": "bumpp --commit --push --tag",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.22",
+    "bumpp": "^7.1.1",
+    "pnpm": "^6.32.3",
+    "prettier": "^2.6.0",
+    "typescript": "^4.6.2",
+    "unbuild": "^0.7.0",
+    "vite": "^2.8.6",
+    "vitest": "^0.7.9"
+  },
+  "packageManager": "pnpm@6.32.3"
+}
