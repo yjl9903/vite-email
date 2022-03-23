@@ -16,14 +16,19 @@ export async function send(root: string, cliOption: CliOption) {
 
   try {
     const option = await resolveOption(root, cliOption);
-
     const emailConfig = option.email;
 
     const { createTransport } = await import('nodemailer');
-
     const transport = createTransport(emailConfig);
 
     const bar = await createProgressBar(option.receivers.length);
+
+    try {
+      await transport.verify();
+    } catch (error) {
+      emailConfig.enable = false;
+      bar.log(`${lightRed('Verify Error')} ${(error as any).message ?? 'Unknown'}`);
+    }
 
     const failList: Array<typeof option.receivers[0]> = [];
 
@@ -57,22 +62,22 @@ export async function send(root: string, cliOption: CliOption) {
             html: output.content
           });
         }
-
-        bar.update('ok', receiver.receiver, subject);
       } catch (error) {
-        console.log(
+        bar.log(
           `${lightRed('Error')} ${(error as any).message ?? 'Unknown'} (${lightGreen(
             receiver.receiver
           )})`
         );
         failList.push(receiver);
+      } finally {
+        bar.update('ok', receiver.receiver);
       }
     }
 
     bar.stop();
 
     if (emailConfig.enable) {
-      console.log(
+      bar.log(
         `${green('√')}  There are ${
           option.receivers.length - failList.length
         } emails has been sent successfully`
@@ -90,7 +95,10 @@ export async function send(root: string, cliOption: CliOption) {
 }
 
 async function createProgressBar(length: number) {
+  console.log();
+
   const { MultiBar, Presets } = await import('cli-progress');
+
   const spinners = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
   const barsize = 50;
   const bar = new MultiBar(
@@ -103,13 +111,15 @@ async function createProgressBar(length: number) {
         const bar =
           options.barCompleteString!.slice(0, completeSize) +
           options.barIncompleteString!.slice(0, incompleteSize);
-        const spinner = cyan(spinners[payload.stamp % spinners.length]);
+        const spinner = cyan(spinners[(payload.stamp ?? 0) % spinners.length]);
 
         if (payload.type === 1) {
           if (payload.status === 'render') {
             return `   Render email for ${lightGreen(payload.receiver)}`;
-          } else {
+          } else if (payload.status === 'send') {
             return `   Sending email to ${lightGreen(payload.receiver)}`;
+          } else {
+            return `   Verifying connection...`;
           }
         } else {
           return ` ${spinner} ${bar} ${params.value}/${params.total}`;
@@ -120,10 +130,9 @@ async function createProgressBar(length: number) {
     },
     Presets.shades_grey
   );
+
   const b1 = bar.create(length, 0);
   const b2 = bar.create(length, 0);
-
-  console.log();
 
   const payload = { status: '', receiver: '', subject: '', stamp: 0 };
   const timer = setInterval(() => {
@@ -132,7 +141,19 @@ async function createProgressBar(length: number) {
     payload.stamp++;
   }, 100);
 
+  const logs: string[] = [];
+  const outputLog = () => {
+    for (const log of logs) {
+      console.log(log);
+    }
+    logs.splice(0);
+  };
+  b1.on('redraw-pre', outputLog);
+
   return {
+    log(log: string) {
+      logs.push(log);
+    },
     update(status: 'send' | 'render' | 'ok', receiver: string = '', subject: string = '') {
       payload.status = status;
       payload.receiver = receiver;
@@ -144,6 +165,7 @@ async function createProgressBar(length: number) {
     stop() {
       clearInterval(timer);
       bar.stop();
+      setTimeout(outputLog, 0);
     }
   };
 }

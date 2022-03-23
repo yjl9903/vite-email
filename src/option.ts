@@ -34,7 +34,7 @@ export async function resolveOption(root: string, cliOption: CliOption): Promise
         onwarn() {}
       }
     },
-    logLevel: 'warn',
+    logLevel: 'silent',
     plugins: [viteSingleFile()]
   });
 
