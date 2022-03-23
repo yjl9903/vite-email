@@ -4,8 +4,6 @@
 
 Send emails rendered by Vite and Markdown-It automatically.
 
-[Go to StackBlitz ⚡️](https://stackblitz.com/github/yjl9903/vite-plugin-email/tree/template).
-
 ## Installation
 
 ```bash
