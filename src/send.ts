@@ -1,12 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 import { lightGreen, cyan, lightRed, green } from 'kolorist';
-import { loadConfigFromFile, mergeConfig } from 'vite';
 
-import { RenderOption, render } from './md';
+import type { CliOption } from './types';
 import { sleep } from './utils';
+import { render } from './md';
+import { resolveOption } from './option';
 
-export async function send(root: string) {
+export async function send(root: string, cliOption: CliOption) {
   const indexPath = path.join(root, 'index.html');
   const existIndexHTML = fs.existsSync(indexPath);
   if (!existIndexHTML) {
@@ -14,46 +15,15 @@ export async function send(root: string) {
   }
 
   try {
-    const viteConfig = await loadConfigFromFile(
-      { command: 'build', mode: 'prod' },
-      path.join(root, 'vite.config.ts')
-    );
+    const option = await resolveOption(root, cliOption);
 
-    const option: RenderOption = {
-      vite: mergeConfig(viteConfig ? viteConfig.config : {}, {
-        root,
-        build: {
-          write: false,
-          rollupOptions: {
-            onwarn() {}
-          }
-        },
-        logLevel: 'warn',
-        plugins: []
-      }),
-      template: fs.readFileSync(path.join(root, 'email.md'), 'utf8')
-    };
-
-    const emailConfig = option.vite.email;
+    const emailConfig = option.email;
 
     if (emailConfig) {
       const { createTransport } = await import('nodemailer');
 
-      if (!emailConfig?.auth?.user) {
-        emailConfig.auth = {};
-        emailConfig.auth.user = await promptForUser();
-        emailConfig.auth.pass = await promptForPass();
-      } else if (!emailConfig?.auth?.pass) {
-        emailConfig.auth.pass = await promptForPass();
-      }
-
       const transport = createTransport(emailConfig);
-      const sender = emailConfig.sender ?? emailConfig?.auth?.user!;
-
-      if (!sender) {
-        // handle empty sender
-        throw new Error('No sender');
-      }
+      const sender = emailConfig.sender ?? emailConfig.auth!.user!;
 
       const items = await loadCSV(path.join(root, emailConfig.csv ?? 'data.csv'));
       const bar = await createProgressBar(items.length);
@@ -82,12 +52,14 @@ export async function send(root: string) {
 
           bar.update('send', item.receiver, subject);
 
-          await transport.sendMail({
-            from: sender,
-            to: item.receiver,
-            subject,
-            html: output.content
-          });
+          if (emailConfig.enable) {
+            await transport.sendMail({
+              from: sender,
+              to: item.receiver,
+              subject,
+              html: output.content
+            });
+          }
 
           bar.update('ok', item.receiver, subject);
         } catch (error) {
@@ -102,14 +74,16 @@ export async function send(root: string) {
 
       bar.stop();
 
-      console.log(
-        `${green('√')}  There are ${
-          items.length - failList.length
-        } emails has been sent successfully`
-      );
-
-      if (failList.length > 0) {
-        await writeCSV(path.join(root, 'data.error.csv'), failList);
+      if (emailConfig.enable) {
+        console.log(
+          `${green('√')}  There are ${
+            items.length - failList.length
+          } emails has been sent successfully`
+        );
+  
+        if (failList.length > 0) {
+          await writeCSV(path.join(root, 'data.error.csv'), failList);
+        }
       }
     } else {
       // handle empty email config
@@ -120,26 +94,6 @@ export async function send(root: string) {
       fs.unlinkSync(indexPath);
     }
   }
-}
-
-async function promptForUser() {
-  const prompts = (await import('prompts')).default;
-  const { user } = await prompts({
-    type: 'text',
-    name: 'user',
-    message: ' User'
-  });
-  return user;
-}
-
-async function promptForPass() {
-  const prompts = (await import('prompts')).default;
-  const { pass } = await prompts({
-    type: 'password',
-    name: 'pass',
-    message: ' Pass'
-  });
-  return pass;
 }
 
 async function createProgressBar(length: number) {

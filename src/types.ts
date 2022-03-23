@@ -3,6 +3,16 @@ import type { UserConfig as ViteUserConfig } from 'vite';
 export type UserConfig = ViteUserConfig & { email?: ViteEmailConfig };
 
 export interface ViteEmailConfig {
+  /**
+   * Enable send email
+   * 
+   * @default true
+   */
+  enable?: boolean;
+  
+  /**
+   * Sender name
+   */
   sender?: string;
 
   /**
@@ -55,4 +65,12 @@ export interface ViteEmailConfig {
    * defines if the connection should use SSL (if true) or not (if false)
    */
   secure?: boolean;
+}
+
+export interface CliOption {
+  send: string | boolean;
+
+  user: string | undefined;
+
+  pass: string | undefined;
 }

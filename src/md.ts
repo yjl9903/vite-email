@@ -26,6 +26,7 @@ export async function render(option: RenderOption): Promise<RenderOutput> {
       plugins: [createMdPlugin(ctx, option.template, option.frontmatter)]
     })
   );
+
   // @ts-ignore
   return { content: output.output[0].source, subject: ctx.title };
 }
