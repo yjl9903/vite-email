@@ -9,6 +9,9 @@ export async function init(_root?: string) {
   if (!fs.existsSync(root)) {
     fs.mkdirSync(root);
   }
+  if (fs.readdirSync(root).length > 0) {
+    throw new Error(`Directory ${_root} is not empty`);
+  }
 
   console.log(`Init workspace in ${root}...`);
 
