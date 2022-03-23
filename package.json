@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-email",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
   "keywords": [
     "vite",
@@ -38,7 +38,7 @@
   "scripts": {
     "build": "unbuild",
     "format": "prettier --write src/**/*.ts",
-    "release": "bumpp --commit --push --tag",
+    "release": "bumpp --commit --push --tag && pnpm publish",
     "start": "pnpm -C example start",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
