@@ -42,7 +42,7 @@
     "start": "pnpm -C example start",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
-    "preversion": "pnpm format && pnpm test"
+    "preversion": "pnpm format && pnpm build"
   },
   "dependencies": {
     "cac": "^6.7.12",
