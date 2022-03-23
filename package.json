@@ -55,7 +55,8 @@
     "markdown-it-title": "^4.0.0",
     "nodemailer": "^6.7.3",
     "prompts": "^2.4.2",
-    "vite": "^2.8.6"
+    "vite": "^2.8.6",
+    "vite-plugin-singlefile": "^0.7.1"
   },
   "devDependencies": {
     "@types/cli-progress": "^3.9.2",

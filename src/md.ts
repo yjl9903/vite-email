@@ -23,12 +23,20 @@ export async function render(option: RenderOption): Promise<RenderOutput> {
   const ctx = {};
   const output = await build(
     mergeConfig(option.vite, {
-      plugins: [createMdPlugin(ctx, option.template, option.frontmatter)]
+      plugins: [
+        createMdPlugin(ctx, option.template, option.frontmatter),
+        <Plugin>{
+          name: 'vmail:index',
+          transformIndexHtml(html) {
+            return html.replace(/<script[\s\S]*>[\s\S]*<\/script>/g, '');
+          }
+        }
+      ]
     })
   );
 
   // @ts-ignore
-  return { content: output.output[0].source, subject: ctx.title };
+  return { content: output.output.find(o => o.fileName === 'index.html').source, subject: ctx.title };
 }
 
 function createMdPlugin(

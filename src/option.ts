@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { loadConfigFromFile, mergeConfig } from 'vite';
+import { viteSingleFile } from 'vite-plugin-singlefile';
 
 import type { RenderOption } from './md';
 import type { CliOption, ViteEmailConfig, UserConfig } from './types';
@@ -21,12 +22,20 @@ export async function resolveOption(root: string, cliOption: CliOption): Promise
     root,
     build: {
       write: false,
+      assetsInlineLimit: Number.MAX_SAFE_INTEGER,
+      chunkSizeWarningLimit: Number.MAX_SAFE_INTEGER,
+      cssCodeSplit: false,
+      brotliSize: false,
       rollupOptions: {
+        inlineDynamicImports: true,
+        output: {
+          manualChunks: () => 'all-in-one.js'
+        },
         onwarn() {}
       }
     },
     logLevel: 'warn',
-    plugins: []
+    plugins: [viteSingleFile()]
   });
 
   if (!mergedViteConfig.email) {
