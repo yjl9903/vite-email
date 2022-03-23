@@ -1,7 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import { build, loadConfigFromFile, mergeConfig, Plugin, UserConfig } from 'vite';
 import MarkdownIt from 'markdown-it';
+// @ts-ignore
+import MarkdownItTitle from 'markdown-it-title';
+import { createTransport } from 'nodemailer';
+import { build, loadConfigFromFile, mergeConfig, Plugin } from 'vite';
+
+import { UserConfig } from './types';
 
 interface RenderOption {
   vite: UserConfig;
@@ -9,6 +14,12 @@ interface RenderOption {
   template: string;
 
   frontmatter?: Record<string, any>;
+}
+
+interface RenderOutput {
+  content: string;
+
+  subject?: string;
 }
 
 export async function send(root: string) {
@@ -25,7 +36,7 @@ export async function send(root: string) {
     );
 
     const option: RenderOption = {
-      vite: mergeConfig(viteConfig ?? {}, {
+      vite: mergeConfig(viteConfig ? viteConfig.config : {}, {
         root,
         build: {
           write: false
@@ -36,7 +47,34 @@ export async function send(root: string) {
       template: fs.readFileSync(path.join(root, 'email.md'), 'utf8')
     };
 
-    console.log(await render(option));
+    const emailConfig = option.vite.email;
+
+    if (emailConfig) {
+      const transport = createTransport(emailConfig);
+      const sender = emailConfig.sender ?? emailConfig?.auth?.user!;
+      if (!sender) {
+        // handle empty sender
+      }
+      for (const item of await loadCSV(path.join(root, emailConfig.csv ?? 'data.csv'))) {
+        option.frontmatter = {
+          ...emailConfig.frontmatter,
+          ...item
+        };
+        const output = await render(option);
+        const subject = item.subject ?? output.subject;
+        if (!subject) {
+          // handle empty subject
+        }
+        await transport.sendMail({
+          from: sender,
+          to: item.receiver,
+          subject,
+          html: output.content
+        });
+      }
+    } else {
+      // handle empty mail config
+    }
   } finally {
     if (!existIndexHTML) {
       fs.unlinkSync(indexPath);
@@ -44,15 +82,28 @@ export async function send(root: string) {
   }
 }
 
-export async function render(option: RenderOption) {
-  const output = await build(
-    mergeConfig(option.vite, { plugins: [createMdPlugin(option.template, option.frontmatter)] })
-  );
-  // @ts-ignore
-  return output.output[0].source;
+async function loadCSV(filePath: string) {
+  const content = fs.readFileSync(filePath, 'utf-8');
+  const { parse } = await import('csv-parse/sync');
+  return parse(content, { columns: true, skip_empty_lines: true });
 }
 
-function createMdPlugin(template: string, frontmatter: Record<string, any> = {}): Plugin {
+async function render(option: RenderOption): Promise<RenderOutput> {
+  const ctx = {};
+  const output = await build(
+    mergeConfig(option.vite, {
+      plugins: [createMdPlugin(ctx, option.template, option.frontmatter)]
+    })
+  );
+  // @ts-ignore
+  return { content: output.output[0].source, subject: ctx.title };
+}
+
+function createMdPlugin(
+  ctx: Record<string, string>,
+  template: string,
+  frontmatter: Record<string, any> = {}
+): Plugin {
   return {
     name: 'vmail:md',
     transformIndexHtml(html) {
@@ -60,7 +111,7 @@ function createMdPlugin(template: string, frontmatter: Record<string, any> = {})
         html: true,
         linkify: true,
         typographer: true
-      });
+      }).use(MarkdownItTitle);
 
       markdown.inline.ruler.push('frontmatter', (state) => {
         if (state.src.charCodeAt(state.pos) !== 0x7b /* { */) {
@@ -93,7 +144,21 @@ function createMdPlugin(template: string, frontmatter: Record<string, any> = {})
         return true;
       });
 
-      return html.replace('<!-- email -->', markdown.render(template));
+      return html.replace('<!-- email -->', markdown.render(template, ctx));
     }
   };
+}
+
+if (import.meta.vitest) {
+  const { it, expect } = import.meta.vitest;
+  it('parse csv', async () => {
+    expect(await loadCSV(path.join(__dirname, '../example/data.csv'))).toMatchInlineSnapshot(`
+      [
+        {
+          "name": "XLor",
+          "receiver": "yjl9903@vip.qq.com",
+        },
+      ]
+    `);
+  });
 }

@@ -10,6 +10,9 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "types": [
+      "vitest/importMeta"
+    ],
     "paths": {
       "vite-plugin-email": ["./src/index.ts"]
     }
