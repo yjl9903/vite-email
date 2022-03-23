@@ -4,8 +4,9 @@ import { lightRed } from 'kolorist';
 
 import { version } from '../package.json';
 
+import type { CliOption } from './types';
 import { send } from './send';
-import { CliOption } from './types';
+import { init } from './init';
 
 const cli = cac();
 
@@ -18,6 +19,10 @@ cli
   .action(async (root: string | undefined, option: CliOption) => {
     await send(root ?? './', option);
   });
+
+cli.command('init [root]', 'Init workspace').action(async (root: string | undefined) => {
+  await init(root);
+});
 
 cli.version(version);
 
