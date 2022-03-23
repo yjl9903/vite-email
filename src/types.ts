@@ -5,11 +5,11 @@ export type UserConfig = ViteUserConfig & { email?: ViteEmailConfig };
 export interface ViteEmailConfig {
   /**
    * Enable send email
-   * 
+   *
    * @default true
    */
   enable?: boolean;
-  
+
   /**
    * Sender name
    */

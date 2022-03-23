@@ -5,7 +5,7 @@ import { lightGreen, cyan, lightRed, green } from 'kolorist';
 import type { CliOption } from './types';
 import { sleep } from './utils';
 import { render } from './md';
-import { resolveOption } from './option';
+import { resolveOption, writeCSV } from './option';
 
 export async function send(root: string, cliOption: CliOption) {
   const indexPath = path.join(root, 'index.html');
@@ -23,52 +23,50 @@ export async function send(root: string, cliOption: CliOption) {
       const { createTransport } = await import('nodemailer');
 
       const transport = createTransport(emailConfig);
-      const sender = emailConfig.sender ?? emailConfig.auth!.user!;
 
-      const items = await loadCSV(path.join(root, emailConfig.csv ?? 'data.csv'));
-      const bar = await createProgressBar(items.length);
+      const bar = await createProgressBar(option.receivers.length);
 
-      const failList: any[] = [];
+      const failList: Array<typeof option.receivers[0]> = [];
 
-      for (const item of items) {
-        if (item !== items[0]) {
+      for (const receiver of option.receivers) {
+        if (receiver !== option.receivers[0]) {
           await sleep(emailConfig.sleep ?? 1000);
         }
 
         try {
-          bar.update('render', item.receiver);
+          bar.update('render', receiver.receiver);
 
           option.frontmatter = {
             ...emailConfig.frontmatter,
-            ...item
+            ...receiver
           };
 
           const output = await render(option);
-          const subject = item.subject ?? output.subject;
+          const subject = receiver.subject ?? output.subject;
           if (!subject) {
             // handle empty subject
             throw new Error('You should set subject in your csv or in the title of Markdown');
           }
 
-          bar.update('send', item.receiver, subject);
+          bar.update('send', receiver.receiver, subject);
 
           if (emailConfig.enable) {
             await transport.sendMail({
-              from: sender,
-              to: item.receiver,
+              from: emailConfig.sender,
+              to: receiver.receiver,
               subject,
               html: output.content
             });
           }
 
-          bar.update('ok', item.receiver, subject);
+          bar.update('ok', receiver.receiver, subject);
         } catch (error) {
           console.log(
             `${lightRed('Error')} ${(error as any).message ?? 'Unknown'} (${lightGreen(
-              item.receiver
+              receiver.receiver
             )})`
           );
-          failList.push(item);
+          failList.push(receiver);
         }
       }
 
@@ -77,10 +75,10 @@ export async function send(root: string, cliOption: CliOption) {
       if (emailConfig.enable) {
         console.log(
           `${green('√')}  There are ${
-            items.length - failList.length
+            option.receivers.length - failList.length
           } emails has been sent successfully`
         );
-  
+
         if (failList.length > 0) {
           await writeCSV(path.join(root, 'data.error.csv'), failList);
         }
@@ -153,35 +151,4 @@ async function createProgressBar(length: number) {
       bar.stop();
     }
   };
-}
-
-async function loadCSV(filePath: string) {
-  const content = fs.readFileSync(filePath, 'utf-8');
-  const { parse } = await import('csv-parse/sync');
-  return parse(content, { columns: true, skip_empty_lines: true, trim: true });
-}
-
-async function writeCSV(filePath: string, arr: any[]) {
-  const { stringify } = await import('csv-stringify/sync');
-  const content = stringify(arr, { header: true });
-  fs.writeFileSync(filePath, content, 'utf-8');
-}
-
-if (import.meta.vitest) {
-  const { it, expect } = import.meta.vitest;
-
-  it('parse csv', async () => {
-    expect(await loadCSV(path.join(__dirname, '../example/data.csv'))).toMatchInlineSnapshot(`
-      [
-        {
-          "name": "XLor",
-          "receiver": "yjl9903@vip.qq.com",
-        },
-        {
-          "name": "yjl",
-          "receiver": "yan_jl@yeah.net",
-        },
-      ]
-    `);
-  });
 }
