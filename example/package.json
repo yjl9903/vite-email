@@ -1,9 +1,0 @@
-{
-  "private": true,
-  "scripts": {
-    "start": "vmail"
-  },
-  "dependencies": {
-    "vite-plugin-email": "workspace:*"
-  }
-}
