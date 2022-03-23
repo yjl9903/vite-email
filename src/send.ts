@@ -14,20 +14,19 @@ export async function send(root: string, cliOption: CliOption) {
     fs.writeFileSync(indexPath, `<div id="email">${REPLACER}</div>`, 'utf-8');
   }
 
-  try {
-    const option = await resolveOption(root, cliOption);
-    const emailConfig = option.email;
+  const option = await resolveOption(root, cliOption);
+  const emailConfig = option.email;
+  const bar = await createProgressBar(option.receivers.length);
 
+  try {
     const { createTransport } = await import('nodemailer');
     const transport = createTransport(emailConfig);
-
-    const bar = await createProgressBar(option.receivers.length);
 
     try {
       await transport.verify();
     } catch (error) {
-      emailConfig.enable = false;
       bar.log(`${lightRed('Verify Error')} ${(error as any).message ?? 'Unknown'}`);
+      return;
     }
 
     const failList: Array<typeof option.receivers[0]> = [];
@@ -74,8 +73,6 @@ export async function send(root: string, cliOption: CliOption) {
       }
     }
 
-    bar.stop();
-
     if (emailConfig.enable) {
       bar.log(
         `${green('√')}  There are ${
@@ -88,6 +85,7 @@ export async function send(root: string, cliOption: CliOption) {
       }
     }
   } finally {
+    bar.stop();
     if (!existIndexHTML) {
       fs.unlinkSync(indexPath);
     }
@@ -118,6 +116,8 @@ async function createProgressBar(length: number) {
             return `   Render email for ${lightGreen(payload.receiver)}`;
           } else if (payload.status === 'send') {
             return `   Sending email to ${lightGreen(payload.receiver)}`;
+          } else if (payload.status === 'ok') {
+            return `   Send email OK to ${lightGreen(payload.receiver)}`;
           } else {
             return `   Verifying connection...`;
           }
@@ -134,7 +134,7 @@ async function createProgressBar(length: number) {
   const b1 = bar.create(length, 0);
   const b2 = bar.create(length, 0);
 
-  const payload = { status: '', receiver: '', subject: '', stamp: 0 };
+  const payload = { status: 'verify', receiver: '', subject: '', stamp: 0 };
   const timer = setInterval(() => {
     b1.increment(0, { ...payload, type: 1 });
     b2.increment(0, { ...payload, type: 2 });
