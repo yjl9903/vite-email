@@ -4,8 +4,7 @@ export default defineConfig({
   email: {
     host: 'smtp.yeah.net',
     auth: {
-      user: '',
-      pass: ''
+      user: 'yan_jl@yeah.net'
     },
     secure: true
   }

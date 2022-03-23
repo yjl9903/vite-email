@@ -20,29 +20,39 @@ export interface ViteEmailConfig {
   csv?: string;
 
   /**
+   * Sleep time between sending
+   * 
+   * @default 1000
+   */
+  sleep?: number;
+
+  /**
    * the hostname or IP address to connect to (defaults to ‘localhost’)
    */
-  host?: string | undefined;
+  host?: string;
 
   /**
    * the port to connect to (defaults to 25 or 465)
    */
-  port?: number | undefined;
+  port?: number;
 
   /**
    * defines authentication data
    */
-  auth?:
-    | {
-        /** the username */
-        user: string;
-        /** then password */
-        pass: string;
-      }
-    | undefined;
+  auth?: {
+    /**
+     * username
+     */
+    user?: string;
+
+    /**
+     * password
+     */
+    pass?: string;
+  };
 
   /**
    * defines if the connection should use SSL (if true) or not (if false)
    */
-  secure?: boolean | undefined;
+  secure?: boolean;
 }
