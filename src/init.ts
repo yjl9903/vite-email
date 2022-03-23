@@ -19,8 +19,8 @@ export async function init(_root?: string) {
   console.log(`\nDone. Now run:\n`);
 
   console.log(`  $ cd ${_root}`);
-  console.log(`  $ pnpm install`);
-  console.log(`  $ pnpm send`);
+  console.log(`  $ npm install`);
+  console.log(`  $ npm run send`);
 }
 
 function writePackage(path: string) {
