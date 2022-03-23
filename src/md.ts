@@ -5,6 +5,8 @@ import MarkdownItTitle from 'markdown-it-title';
 
 import type { UserConfig } from './types';
 
+export const REPLACER = `<!-- email -->`;
+
 export interface RenderOption {
   vite: UserConfig;
 
@@ -36,7 +38,10 @@ export async function render(option: RenderOption): Promise<RenderOutput> {
   );
 
   // @ts-ignore
-  return { content: output.output.find(o => o.fileName === 'index.html').source, subject: ctx.title };
+  return {
+    content: output.output.find((o) => o.fileName === 'index.html').source,
+    subject: ctx.title
+  };
 }
 
 function createMdPlugin(
@@ -84,7 +89,7 @@ function createMdPlugin(
         return true;
       });
 
-      return html.replace('<!-- email -->', markdown.render(template, ctx));
+      return html.replace(REPLACER, markdown.render(template, ctx));
     }
   };
 }

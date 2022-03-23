@@ -4,14 +4,14 @@ import { lightGreen, cyan, lightRed, green } from 'kolorist';
 
 import type { CliOption } from './types';
 import { sleep } from './utils';
-import { render } from './md';
+import { render, REPLACER } from './md';
 import { resolveOption, writeCSV } from './option';
 
 export async function send(root: string, cliOption: CliOption) {
   const indexPath = path.join(root, 'index.html');
   const existIndexHTML = fs.existsSync(indexPath);
   if (!existIndexHTML) {
-    fs.writeFileSync(indexPath, `<div id="email"><!-- email --></div>`, 'utf-8');
+    fs.writeFileSync(indexPath, `<div id="email">${REPLACER}</div>`, 'utf-8');
   }
 
   try {
