@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { lightGreen, cyan, lightRed, green } from 'kolorist';
+import { lightGreen, cyan, lightRed, green, red, hidden } from 'kolorist';
 
 import type { CliOption } from './types';
 import { sleep } from './utils';
@@ -29,7 +29,7 @@ export async function send(root: string, cliOption: CliOption) {
       return;
     }
 
-    const failList: Array<typeof option.receivers[0]> = [];
+    const failList: Array<any> = [];
 
     for (const receiver of option.receivers) {
       if (receiver !== option.receivers[0]) {
@@ -67,19 +67,18 @@ export async function send(root: string, cliOption: CliOption) {
         }
       } catch (error) {
         bar.log(
-          `${lightRed('Error')} ${(error as any).message ?? 'Unknown'} (${lightGreen(
-            receiver.receiver
-          )})`
+          `${red('✗')} ${(error as any).message ?? 'Unknown'} (${lightGreen(receiver.receiver)})`
         );
-        failList.push(receiver);
+        failList.push(receiver.frontmatter);
       } finally {
         bar.update('ok', receiver.receiver);
       }
     }
 
     if (emailConfig.enable) {
+      bar.log('');
       bar.log(
-        `${green('√')}  There are ${
+        `${failList.length === 0 ? green('√') : red('✗')} There are ${
           option.receivers.length - failList.length
         } emails has been sent successfully`
       );
@@ -97,8 +96,6 @@ export async function send(root: string, cliOption: CliOption) {
 }
 
 async function createProgressBar(length: number) {
-  console.log();
-
   const { MultiBar, Presets } = await import('cli-progress');
 
   const spinners = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
@@ -125,8 +122,10 @@ async function createProgressBar(length: number) {
           } else {
             return `   Verifying connection...`;
           }
-        } else {
+        } else if (payload.type === 2) {
           return ` ${spinner} ${bar} ${params.value}/${params.total}`;
+        } else {
+          return `${hidden(bar)}`;
         }
       },
       barsize,
@@ -135,16 +134,19 @@ async function createProgressBar(length: number) {
     Presets.shades_grey
   );
 
+  const b0 = bar.create(length, 0);
   const b1 = bar.create(length, 0);
   const b2 = bar.create(length, 0);
 
   const payload = { status: 'verify', receiver: '', subject: '', stamp: 0 };
   const timer = setInterval(() => {
+    b0.increment(0, { ...payload, type: 0 });
     b1.increment(0, { ...payload, type: 1 });
     b2.increment(0, { ...payload, type: 2 });
     payload.stamp++;
   }, 100);
 
+  let firstLog = true;
   const logs: string[] = [];
   const outputLog = () => {
     for (const log of logs) {
@@ -152,10 +154,14 @@ async function createProgressBar(length: number) {
     }
     logs.splice(0);
   };
-  b1.on('redraw-pre', outputLog);
+  b0.on('redraw-pre', outputLog);
 
   return {
     log(log: string) {
+      if (firstLog) {
+        logs.push('');
+        firstLog = false;
+      }
       logs.push(log);
     },
     update(status: 'send' | 'render' | 'ok', receiver: string = '', subject: string = '') {
@@ -163,6 +169,7 @@ async function createProgressBar(length: number) {
       payload.receiver = receiver;
       payload.subject = subject;
       const step = status === 'ok' ? 1 : 0;
+      b0.increment(step, { ...payload, type: 0 });
       b1.increment(step, { ...payload, type: 1 });
       b2.increment(step, { ...payload, type: 2 });
     },
