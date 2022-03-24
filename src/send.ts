@@ -3,8 +3,8 @@ import path from 'path';
 import { lightGreen, cyan, lightRed, green, red, hidden } from 'kolorist';
 
 import type { CliOption } from './types';
-import { sleep } from './utils';
 import { render, REPLACER } from './md';
+import { sleep } from './utils';
 import { resolveOption, writeCSV } from './option';
 
 export async function send(root: string, cliOption: CliOption) {

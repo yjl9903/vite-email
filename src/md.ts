@@ -1,5 +1,5 @@
 import MarkdownIt from 'markdown-it';
-import { build, mergeConfig, Plugin } from 'vite';
+import { build, mergeConfig } from 'vite';
 import { debug as createDebug } from 'debug';
 // @ts-ignore
 import MarkdownItTitle from 'markdown-it-title';
@@ -24,12 +24,15 @@ export interface RenderOutput {
   subject?: string;
 }
 
-export async function render(option: RenderOption): Promise<RenderOutput> {
+export async function render(
+  option: RenderOption,
+  config = { frontmatter: true }
+): Promise<RenderOutput> {
   const ctx: any = {};
   const output = await build(
     mergeConfig(option.vite, {
       plugins: [
-        createMdPlugin(ctx, option.template, option.frontmatter),
+        createMdPlugin(ctx, option.template, option.frontmatter, config),
         {
           name: 'vmail:index',
           apply: 'build',
@@ -99,9 +102,10 @@ export function createMarkownIt(
 function createMdPlugin(
   ctx: Record<string, string>,
   template: string,
-  frontmatter: Record<string, any> = {}
+  frontmatter: Record<string, any> = {},
+  config = { frontmatter: true }
 ) {
-  const markdown = createMarkownIt(frontmatter);
+  const markdown = createMarkownIt(frontmatter, config);
 
   return {
     name: 'vmail:md',
