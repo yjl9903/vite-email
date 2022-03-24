@@ -34,6 +34,7 @@ function writePackage(path: string) {
     "send": "vmail"
   },
   "dependencies": {
+    "github-markdown-css": "^5.1.0",
     "vite-plugin-email": "^${version}"
   }
 }`;
@@ -61,17 +62,7 @@ export const DEFAULT_INDEX_HTML = `<html>
   <title>Email</title>
 </head>
 <body>
-  <div>${REPLACER}</div>
-</body>
-</html>`;
-
-export const DEFAULT_INDEX_HTML_MAIN = `<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Email</title>
-</head>
-<body>
-  <div>${REPLACER}</div>
+  <div id="email" class="markdown-body">${REPLACER}</div>
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>`;
@@ -80,7 +71,7 @@ function writeEmail(root: string) {
   fs.writeFileSync(path.join(root, 'email.md'), `# Hello {{ name }}\n`, 'utf-8');
   fs.writeFileSync(path.join(root, 'data.csv'), `receiver,name\n`, 'utf-8');
 
-  fs.writeFileSync(path.join(root, 'index.html'), DEFAULT_INDEX_HTML_MAIN, 'utf-8');
+  fs.writeFileSync(path.join(root, 'index.html'), DEFAULT_INDEX_HTML, 'utf-8');
 
   fs.mkdirSync(path.join(root, 'src'));
 
