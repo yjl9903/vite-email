@@ -7,7 +7,7 @@ Send emails rendered by Vite and Markdown-It automatically.
 ## Installation
 
 ```bash
-npm i vite-plugin-email
+npm i -D vite-plugin-email
 ```
 
 You can also install it globally.
@@ -15,6 +15,49 @@ You can also install it globally.
 ```bash
 npm i -g vite-plugin-email
 vmail --version
+```
+
+## Usage
+
+Create a new workspace.
+
+```bash
+vmail init new-workspace
+cd new-workspace
+npm install
+```
+
+The created workspace contains some config files. `data.csv` stores the list of receivers and corresponding information. The `receiver` column specify the email of the receiver. `email.md` is the email content template to be rendered. You can use `{{ ... }}` to insert variable from `data.csv`.
+
+For example, here is `data.csv`.
+
+```csv
+receiver,name
+bot@github.com,Bot
+```
+
+Here is `email.md`.
+
+```md
+# Hello {{ name }}
+```
+
+Then the following content will be sent to `bot@github.com`.
+
+```md
+# Hello Bot
+```
+
+You can also start a dev server to preview the content of emails.
+
+```bash
+vmail dev
+```
+
+If everything is done, send emails with a single command.
+
+```bash
+vmail
 ```
 
 ## License
