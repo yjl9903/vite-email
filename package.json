@@ -36,13 +36,15 @@
     "*.mjs"
   ],
   "scripts": {
-    "build": "unbuild",
-    "format": "prettier --write src/**/*.ts",
+    "build": "pnpm build:core && pnpm build:client",
+    "build:client": "pnpm -C client build",
+    "build:core": "unbuild",
+    "format": "prettier --write client/**/*.{ts,vue} example/*.ts src/**/*.ts",
     "release": "bumpp --commit --push --tag && pnpm publish",
     "start": "pnpm -C example start",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
-    "preversion": "unbuild"
+    "preversion": "pnpm build"
   },
   "dependencies": {
     "cac": "^6.7.12",
