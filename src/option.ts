@@ -114,10 +114,27 @@ async function promptForPass() {
   return pass;
 }
 
-export async function loadCSV(filePath: string) {
+export async function loadCSV(filePath: string): Promise<Receiver[]> {
   const content = fs.readFileSync(filePath, 'utf-8');
   const { parse } = await import('csv-parse/sync');
-  return parse(content, { columns: true, skip_empty_lines: true, trim: true });
+  const result: Receiver[] = parse(content, { columns: true, skip_empty_lines: true, trim: true });
+  checkCSV(result);
+  return result;
+}
+
+function checkCSV(receivers: Receiver[]): boolean {
+  const res: string[] = [];
+  for (const receiver of receivers) {
+    if (!receiver.receiver) {
+      throw new Error(`Receiver field is empty in "${JSON.stringify(receiver)}"`);
+    } else {
+      res.push(receiver.receiver);
+    }
+  }
+  if (new Set(res).size !== res.length) {
+    throw new Error('Duplicate receivers');
+  }
+  return true;
 }
 
 export async function writeCSV(filePath: string, arr: Array<Receiver>) {
@@ -142,5 +159,14 @@ if (import.meta.vitest) {
         },
       ]
     `);
+  });
+
+  it('must have valid receiver', () => {
+    // @ts-ignore
+    expect(() => checkCSV([{ name: '123' }])).toThrowErrorMatchingInlineSnapshot('"Receiver field is empty in \\"{\\"name\\":\\"123\\"}\\""');
+    expect(() => checkCSV([{ receiver: '' }])).toThrowErrorMatchingInlineSnapshot('"Receiver field is empty in \\"{\\"receiver\\":\\"\\"}\\""');
+    expect(() =>
+      checkCSV([{ receiver: '1' }, { receiver: '1' }])
+    ).toThrowErrorMatchingInlineSnapshot('"Duplicate receivers"');
   });
 }
