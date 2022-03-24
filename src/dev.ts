@@ -32,7 +32,10 @@ export async function dev(root: string, port: number) {
         );
         const html = template
           .replace('<!-- list -->', '<a href="/">Template</a>' + receivers.join(''))
-          .replace('<!-- email -->', option.template);
+          .replace(
+            '<!-- email -->',
+            createMarkownIt(option.frontmatter, { frontmatter: false }).render(option.template)
+          );
 
         res.end(html);
       } catch (error) {

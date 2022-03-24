@@ -54,43 +54,49 @@ export async function render(option: RenderOption): Promise<RenderOutput> {
   };
 }
 
-export function createMarkownIt(frontmatter: Record<string, any> = {}) {
+export function createMarkownIt(
+  frontmatter: Record<string, any> = {},
+  option = { frontmatter: true }
+) {
   const markdown = new MarkdownIt({
     html: true,
     linkify: true,
     typographer: true
   }).use(MarkdownItTitle);
 
-  markdown.inline.ruler.push('frontmatter', (state) => {
-    if (state.src.charCodeAt(state.pos) !== 0x7b /* { */) {
-      return false;
-    }
-    if (state.src.charCodeAt(state.pos + 1) !== 0x7b /* { */) {
-      return false;
-    }
-    let pos = state.pos + 2;
-    for (; pos + 1 < state.src.length; pos++) {
-      if (
-        state.src.charCodeAt(pos) === 0x7d /* } */ &&
-        state.src.charCodeAt(pos + 1) === 0x7d /* } */
-      ) {
-        const varName = state.src.slice(state.pos + 2, pos - 1).trim();
-        if (varName in frontmatter) {
-          state.pending += frontmatter[varName];
+  if (option.frontmatter) {
+    markdown.inline.ruler.push('frontmatter', (state) => {
+      if (state.src.charCodeAt(state.pos) !== 0x7b /* { */) {
+        return false;
+      }
+      if (state.src.charCodeAt(state.pos + 1) !== 0x7b /* { */) {
+        return false;
+      }
+      let pos = state.pos + 2;
+      for (; pos + 1 < state.src.length; pos++) {
+        if (
+          state.src.charCodeAt(pos) === 0x7d /* } */ &&
+          state.src.charCodeAt(pos + 1) === 0x7d /* } */
+        ) {
+          const varName = state.src.slice(state.pos + 2, pos - 1).trim();
+          if (varName in frontmatter) {
+            state.pending += frontmatter[varName];
+            break;
+          } else {
+            // fail to find varName
+            throw new Error(`"${varName}" not found when render Markdown`);
+          }
         } else {
-          // fail to find varName
-          throw new Error(`"${varName}" not found when render Markdown`);
-        }
-      } else {
-        const tmp = state.src.slice(state.pos + 2, pos).trim();
-        if (/\s/.test(tmp)) {
-          return false;
+          const tmp = state.src.slice(state.pos + 2, pos).trim();
+          if (/\s/.test(tmp)) {
+            return false;
+          }
         }
       }
-    }
-    state.pos = pos + 2;
-    return true;
-  });
+      state.pos = pos + 2;
+      return true;
+    });
+  }
 
   return markdown;
 }
@@ -109,4 +115,17 @@ function createMdPlugin(
       return html.replace(REPLACER, markdown.render(template, ctx));
     }
   };
+}
+
+if (import.meta.vitest) {
+  const { it, expect } = import.meta.vitest;
+
+  it('parse md', () => {
+    const md = createMarkownIt({ name: 'world', id: '123' });
+    expect(md.render('# Hello {{ id }} - {{ name }}\n\nMy id is {{ id }}')).toMatchInlineSnapshot(`
+      "<h1>Hello 123 - world</h1>
+      <p>My id is 123</p>
+      "
+    `);
+  });
 }
