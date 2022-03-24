@@ -28,8 +28,9 @@ cli
 
 cli
   .command('dev [root]', 'Start dev server')
+  .option('--md <template>', 'Markdown template path', { default: 'email.md' })
   .option('--port <port>', 'port to listen to', { default: 3000 })
-  .action(async (root: string | undefined, option: { port: number }) => {
+  .action(async (root: string | undefined, option: { port: number, md: string }) => {
     await dev(root ?? './', option.port);
   });
 

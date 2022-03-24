@@ -8,6 +8,7 @@ import { presetAttributify, presetUno } from 'unocss';
 import transformerDirective from '@unocss/transformer-directives';
 
 export default defineConfig({
+  base: '/__email',
   plugins: [
     vue(),
     Unocss({ presets: [presetUno(), presetAttributify()], transformers: [transformerDirective()] }),

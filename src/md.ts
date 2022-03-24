@@ -1,5 +1,5 @@
 import MarkdownIt from 'markdown-it';
-import { build, createServer, mergeConfig, Plugin } from 'vite';
+import { build, mergeConfig, Plugin } from 'vite';
 import { debug as createDebug } from 'debug';
 // @ts-ignore
 import MarkdownItTitle from 'markdown-it-title';
@@ -22,15 +22,6 @@ export interface RenderOutput {
   content: string;
 
   subject?: string;
-}
-
-export async function startDevServer(option: RenderOption) {
-  return await createServer({
-    server: {
-      middlewareMode: 'ssr'
-    },
-    plugins: [createMdPlugin({}, option.template, option.frontmatter)]
-  });
 }
 
 export async function render(option: RenderOption): Promise<RenderOutput> {
