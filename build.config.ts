@@ -6,6 +6,9 @@ export default defineBuildConfig({
   declaration: true,
   clean: true,
   externals: [path.join(__dirname, './package.json')],
+  replace: {
+    'import.meta.vitest': 'undefined'
+  },
   rollup: {
     emitCJS: true
   }
