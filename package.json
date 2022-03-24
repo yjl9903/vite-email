@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-email",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "",
   "keywords": [
     "vite",
@@ -42,7 +42,7 @@
     "start": "pnpm -C example start",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
-    "preversion": "pnpm format && pnpm build"
+    "preversion": "unbuild"
   },
   "dependencies": {
     "cac": "^6.7.12",
