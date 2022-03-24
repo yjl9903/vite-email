@@ -2,6 +2,22 @@ import type { UserConfig as ViteUserConfig } from 'vite';
 
 export type UserConfig = ViteUserConfig & { email?: ViteEmailConfig };
 
+export interface CsvConfig {
+  /**
+   * Path to csv
+   * 
+   * @default 'data.csv'
+   */
+  filename?: string;
+
+  /**
+   * Get receiver field
+   * 
+   * @default 'receiver'
+   */
+  receiver?: string | ((frontmatter: Record<string, string>) => string)
+}
+
 export interface ViteEmailConfig {
   /**
    * Enable send email
@@ -23,11 +39,9 @@ export interface ViteEmailConfig {
   frontmatter?: Record<string, string>;
 
   /**
-   * Path to the csv data file
-   *
-   * @default 'data.csv'
+   * Path to the csv data file, or config
    */
-  csv?: string;
+  csv?: string | CsvConfig;
 
   /**
    * Sleep time between sending

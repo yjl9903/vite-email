@@ -4,7 +4,7 @@ import { loadConfigFromFile, mergeConfig, normalizePath } from 'vite';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 
 import type { RenderOption } from './md';
-import type { CliOption, ViteEmailConfig, UserConfig } from './types';
+import type { CliOption, ViteEmailConfig, UserConfig, CsvConfig } from './types';
 
 export type Receiver = {
   receiver: string;
@@ -64,8 +64,17 @@ export async function resolveOption(root: string, cliOption: CliOption): Promise
   if (typeof cliOption.send === 'string' && cliOption.send.length > 0) {
     receivers.push({ receiver: cliOption.send, attachments: [], frontmatter: {} });
   } else {
-    const csvPath = path.join(root, emailConfig?.csv ?? 'data.csv');
-    receivers.push(...(await loadCSV(csvPath)));
+    if (!emailConfig.csv) {
+      emailConfig.csv = { filename: 'data.csv' };
+    }
+    if (typeof emailConfig.csv === 'string') {
+      emailConfig.csv = { filename: emailConfig.csv };
+    }
+    if (!emailConfig.csv!.filename) {
+      emailConfig.csv.filename = 'data.csv';
+    }
+    const csvPath = path.join(root, emailConfig?.csv?.filename ?? 'data.csv');
+    receivers.push(...(await loadCSV(csvPath, emailConfig.csv)));
   }
 
   // 1. Cli Option (overwrite vite config)
@@ -122,7 +131,7 @@ async function promptForPass() {
   return pass;
 }
 
-export async function loadCSV(filePath: string): Promise<Receiver[]> {
+export async function loadCSV(filePath: string, config: CsvConfig = {}): Promise<Receiver[]> {
   const content = fs.readFileSync(filePath, 'utf-8');
   const { parse } = await import('csv-parse/sync');
   const result = parse(content, {
@@ -131,18 +140,34 @@ export async function loadCSV(filePath: string): Promise<Receiver[]> {
     skip_empty_lines: true,
     trim: true
   });
-  return parseCSV(result);
+  return parseCSV(result, config);
 }
 
-function parseCSV(receivers: Array<Record<string, string>>): Receiver[] {
+function parseCSV(receivers: Array<Record<string, string>>, config: CsvConfig = {}): Receiver[] {
   const names: string[] = [];
   const res: Receiver[] = [];
-  for (const receiver of receivers) {
-    if (!receiver.receiver) {
-      throw new Error(`Receiver field is empty in "${JSON.stringify(receiver)}"`);
+
+  const getReceiver = (record: Record<string, string>): string | undefined => {
+    if (config.receiver) {
+      if (typeof config.receiver === 'string') {
+        return Reflect.get(record, config.receiver);
+      } else {
+        return config.receiver(record);
+      }
     } else {
-      names.push(receiver.receiver);
+      // default receiver
+      return record.receiver;
     }
+  };
+
+  for (const receiver of receivers) {
+    const name = getReceiver(receiver);
+    if (!name || name.length === 0) {
+      throw new Error(`Get receiver fail in "${JSON.stringify(receiver)}"`);
+    } else {
+      names.push(name);
+    }
+
     const attachments: string[] = [];
     const parseAttachment = (text: string) => {
       return text
@@ -157,7 +182,7 @@ function parseCSV(receivers: Array<Record<string, string>>): Receiver[] {
       attachments.push(...parseAttachment(receiver.attachments));
     }
     res.push({
-      receiver: receiver.receiver,
+      receiver: name,
       subject: receiver.subject,
       attachments,
       frontmatter: receiver
@@ -203,14 +228,42 @@ if (import.meta.vitest) {
     `);
   });
 
+  it('success parse csv with custom field', () => {
+    expect(parseCSV([{ name: '123' }], { receiver: 'name' })).toMatchInlineSnapshot(`
+      [
+        {
+          "attachments": [],
+          "frontmatter": {
+            "name": "123",
+          },
+          "receiver": "123",
+          "subject": undefined,
+        },
+      ]
+    `);
+
+    expect(parseCSV([{ '姓名': '456' }], { receiver: r => r['姓名'] })).toMatchInlineSnapshot(`
+      [
+        {
+          "attachments": [],
+          "frontmatter": {
+            "姓名": "456",
+          },
+          "receiver": "456",
+          "subject": undefined,
+        },
+      ]
+    `);
+  });
+
   it('must have valid receiver', () => {
     // @ts-ignore
     expect(() => parseCSV([{ name: '123' }])).toThrowErrorMatchingInlineSnapshot(
-      '"Receiver field is empty in \\"{\\"name\\":\\"123\\"}\\""'
+      '"Get receiver fail in \\"{\\"name\\":\\"123\\"}\\""'
     );
     // @ts-ignore
     expect(() => parseCSV([{ receiver: '' }])).toThrowErrorMatchingInlineSnapshot(
-      '"Receiver field is empty in \\"{\\"receiver\\":\\"\\"}\\""'
+      '"Get receiver fail in \\"{\\"receiver\\":\\"\\"}\\""'
     );
     expect(() =>
       // @ts-ignore
