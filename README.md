@@ -4,6 +4,8 @@
 
 Send emails rendered by Vite and Markdown-It automatically.
 
+![screenshot](./screenshot.png)
+
 ## Installation
 
 ```bash
