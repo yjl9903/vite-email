@@ -41,7 +41,7 @@ export async function send(root: string, cliOption: CliOption) {
 
         option.frontmatter = {
           ...emailConfig.frontmatter,
-          ...receiver
+          ...receiver.frontmatter
         };
 
         const output = await render(option);
@@ -58,7 +58,8 @@ export async function send(root: string, cliOption: CliOption) {
             from: emailConfig.sender,
             to: receiver.receiver,
             subject,
-            html: output.content
+            html: output.content,
+            attachments: receiver.attachments.map((p) => ({ path: path.join(root, p) }))
           });
         }
       } catch (error) {

@@ -8,7 +8,10 @@ import type { CliOption, ViteEmailConfig, UserConfig } from './types';
 
 type Receiver = {
   receiver: string;
-} & Record<string, string>;
+  subject?: string;
+  attachments: string[];
+  frontmatter: Record<string, string>;
+};
 
 type ResolvedOption = RenderOption & { email: Required<ViteEmailConfig>; receivers: Receiver[] };
 
@@ -55,7 +58,7 @@ export async function resolveOption(root: string, cliOption: CliOption): Promise
 
   // If specify send target, do not read csv
   if (typeof cliOption.send === 'string' && cliOption.send.length > 0) {
-    receivers.push({ receiver: cliOption.send });
+    receivers.push({ receiver: cliOption.send, attachments: [], frontmatter: {} });
   } else {
     const csvPath = path.join(root, emailConfig?.csv ?? 'data.csv');
     receivers.push(...(await loadCSV(csvPath)));
@@ -117,24 +120,43 @@ async function promptForPass() {
 export async function loadCSV(filePath: string): Promise<Receiver[]> {
   const content = fs.readFileSync(filePath, 'utf-8');
   const { parse } = await import('csv-parse/sync');
-  const result: Receiver[] = parse(content, { columns: true, skip_empty_lines: true, trim: true });
-  checkCSV(result);
-  return result;
+  const result = parse(content, { columns: true, skip_empty_lines: true, trim: true });
+  return parseCSV(result);
 }
 
-function checkCSV(receivers: Receiver[]): boolean {
-  const res: string[] = [];
+function parseCSV(receivers: Array<Record<string, string>>): Receiver[] {
+  const names: string[] = [];
+  const res: Receiver[] = [];
   for (const receiver of receivers) {
     if (!receiver.receiver) {
       throw new Error(`Receiver field is empty in "${JSON.stringify(receiver)}"`);
     } else {
-      res.push(receiver.receiver);
+      names.push(receiver.receiver);
     }
+    const attachments: string[] = [];
+    const parseAttachment = (text: string) => {
+      return text
+        .split(':')
+        .map((t) => t.trim())
+        .filter((t) => !!t);
+    };
+    if (receiver.attachment) {
+      attachments.push(...parseAttachment(receiver.attachment));
+    }
+    if (receiver.attachments) {
+      attachments.push(...parseAttachment(receiver.attachments));
+    }
+    res.push({
+      receiver: receiver.receiver,
+      subject: receiver.subject,
+      attachments,
+      frontmatter: receiver
+    });
   }
-  if (new Set(res).size !== res.length) {
+  if (new Set(names).size !== names.length) {
     throw new Error('Duplicate receivers');
   }
-  return true;
+  return res;
 }
 
 export async function writeCSV(filePath: string, arr: Array<Receiver>) {
@@ -150,12 +172,22 @@ if (import.meta.vitest) {
     expect(await loadCSV(path.join(__dirname, '../example/data.csv'))).toMatchInlineSnapshot(`
       [
         {
-          "name": "XLor",
+          "attachments": [],
+          "frontmatter": {
+            "name": "XLor",
+            "receiver": "yjl9903@vip.qq.com",
+          },
           "receiver": "yjl9903@vip.qq.com",
+          "subject": undefined,
         },
         {
-          "name": "yjl",
+          "attachments": [],
+          "frontmatter": {
+            "name": "yjl",
+            "receiver": "yan_jl@yeah.net",
+          },
           "receiver": "yan_jl@yeah.net",
+          "subject": undefined,
         },
       ]
     `);
@@ -163,14 +195,16 @@ if (import.meta.vitest) {
 
   it('must have valid receiver', () => {
     // @ts-ignore
-    expect(() => checkCSV([{ name: '123' }])).toThrowErrorMatchingInlineSnapshot(
+    expect(() => parseCSV([{ name: '123' }])).toThrowErrorMatchingInlineSnapshot(
       '"Receiver field is empty in \\"{\\"name\\":\\"123\\"}\\""'
     );
-    expect(() => checkCSV([{ receiver: '' }])).toThrowErrorMatchingInlineSnapshot(
+    // @ts-ignore
+    expect(() => parseCSV([{ receiver: '' }])).toThrowErrorMatchingInlineSnapshot(
       '"Receiver field is empty in \\"{\\"receiver\\":\\"\\"}\\""'
     );
     expect(() =>
-      checkCSV([{ receiver: '1' }, { receiver: '1' }])
+      // @ts-ignore
+      parseCSV([{ receiver: '1' }, { receiver: '1' }])
     ).toThrowErrorMatchingInlineSnapshot('"Duplicate receivers"');
   });
 }
