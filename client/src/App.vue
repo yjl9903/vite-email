@@ -2,6 +2,7 @@
 import { watch, ref } from 'vue';
 import IconGithub from '~icons/mdi/github';
 import IconEmail from '~icons/ic/outline-email';
+import IconRefresh from '~icons/carbon/renew';
 
 import { useStore } from './logic';
 
@@ -9,15 +10,12 @@ const { receivers, fetch } = useStore();
 
 const preview = ref('');
 const md = ref('');
-watch(
-  preview,
-  (preview) => {
-    fetch(preview).then((r) => {
-      md.value = r.content;
-    });
-  },
-  { immediate: true }
-);
+const update = (preview: string) => {
+  fetch(preview).then((r) => {
+    md.value = r.content;
+  });
+};
+watch(preview, update, { immediate: true });
 </script>
 
 <template>
@@ -32,11 +30,14 @@ watch(
       </div>
 
       <div class="inline-block">
-        <button @click="preview = ''" class="icon-btn text-lg mr-2">
+        <button title="Template" @click="preview = ''" class="icon-btn text-lg">
           <IconEmail></IconEmail>
         </button>
+        <button title="Refresh" @click="update(preview)" class="icon-btn text-lg">
+          <IconRefresh></IconRefresh>
+        </button>
         <a
-          class="icon-btn text-lg"
+          class="icon-btn text-lg px-[6px]"
           href="https://github.com/yjl9903/vite-plugin-email"
           target="_blank"
         >
@@ -80,7 +81,7 @@ a:active {
 
 nav {
   @apply px-6 border-0 border-b gap-4 h-54px children:my-auto;
-  border-color: rgba(156,163,175, 0.3);
+  border-color: rgba(156, 163, 175, 0.3);
 }
 
 .btn {
@@ -107,14 +108,14 @@ nav {
 }
 
 #sidebar {
-  border-color: rgba(156,163,175, 0.3);
+  border-color: rgba(156, 163, 175, 0.3);
 }
 
 #sidebar > div {
   @apply block border-0 border-b px-6 py-2 text-left font-mono text-sm;
   @apply cursor-pointer underline-transparent;
   @apply hover:bg-light-400;
-  border-color: rgba(156,163,175, 0.3);
+  border-color: rgba(156, 163, 175, 0.3);
 }
 
 /* Selection */

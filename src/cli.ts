@@ -31,7 +31,7 @@ cli
   .option('--md <template>', 'Markdown template path', { default: 'email.md' })
   .option('--port <port>', 'port to listen to', { default: 3000 })
   .action(async (root: string | undefined, option: { port: number; md: string }) => {
-    await dev(root ?? './', option.port);
+    await dev(root ?? './', option.md, option.port);
   });
 
 cli.version(version);

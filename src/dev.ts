@@ -8,24 +8,28 @@ import { createServer, mergeConfig, UserConfig } from 'vite';
 
 import { version } from '../package.json';
 
-import { validEmail } from './utils';
 import { createMarkownIt } from './md';
 import { resolveOption } from './option';
 
-export async function dev(root: string, port: number) {
-  const option = await resolveOption(root, { send: false, md: 'email.md' });
+export async function dev(root: string, md: string, port: number) {
+  const option = await resolveOption(root, { send: false, md });
   const server = await createServer(
     mergeConfig(option.vite, <UserConfig>{
       plugins: [
         {
           name: 'vmail:server',
+          async handleHotUpdate(ctx) {
+            if (ctx.file === option.entry) {
+              option.template = await ctx.read();
+            }
+          },
           configureServer(server) {
             server.middlewares.use(
               '/__email',
               sirv(path.join(__dirname, '../dist/client'), { single: true, dev: true })
             );
 
-            server.middlewares.use('/__email_list', (req, res) => {
+            server.middlewares.use('/__email_list', (_req, res) => {
               res.end(JSON.stringify(option.receivers, null, 2));
             });
 

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { loadConfigFromFile, mergeConfig } from 'vite';
+import { loadConfigFromFile, mergeConfig, normalizePath } from 'vite';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 
 import type { RenderOption } from './md';
@@ -13,7 +13,11 @@ export type Receiver = {
   frontmatter: Record<string, string>;
 };
 
-type ResolvedOption = RenderOption & { email: Required<ViteEmailConfig>; receivers: Receiver[] };
+type ResolvedOption = RenderOption & {
+  entry: string;
+  email: Required<ViteEmailConfig>;
+  receivers: Receiver[];
+};
 
 export async function resolveOption(root: string, cliOption: CliOption): Promise<ResolvedOption> {
   const viteConfig = await loadConfigFromFile(
@@ -91,6 +95,7 @@ export async function resolveOption(root: string, cliOption: CliOption): Promise
     template: fs.readFileSync(path.join(root, cliOption.md), 'utf8'),
     frontmatter: emailConfig.frontmatter ?? {},
     email: mergedViteConfig.email as Required<ViteEmailConfig>,
+    entry: normalizePath(path.resolve(process.cwd(), root, cliOption.md)),
     receivers
   };
 
