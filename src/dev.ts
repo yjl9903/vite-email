@@ -56,7 +56,9 @@ export async function dev(root: string, port: number) {
         const receivers = option.receivers.map(
           ({ receiver }) => `<a href="/${receiver}">${receiver}</a>`
         );
-        const markdown = createMarkownIt(option.receivers.find((r) => r.receiver === email)?.frontmatter);
+        const markdown = createMarkownIt(
+          option.receivers.find((r) => r.receiver === email)?.frontmatter
+        );
         const html = template
           .replace('<!-- receiver -->', email)
           .replace('<!-- list -->', '<a href="/">Template</a>' + receivers.join(''))
