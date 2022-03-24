@@ -163,8 +163,12 @@ if (import.meta.vitest) {
 
   it('must have valid receiver', () => {
     // @ts-ignore
-    expect(() => checkCSV([{ name: '123' }])).toThrowErrorMatchingInlineSnapshot('"Receiver field is empty in \\"{\\"name\\":\\"123\\"}\\""');
-    expect(() => checkCSV([{ receiver: '' }])).toThrowErrorMatchingInlineSnapshot('"Receiver field is empty in \\"{\\"receiver\\":\\"\\"}\\""');
+    expect(() => checkCSV([{ name: '123' }])).toThrowErrorMatchingInlineSnapshot(
+      '"Receiver field is empty in \\"{\\"name\\":\\"123\\"}\\""'
+    );
+    expect(() => checkCSV([{ receiver: '' }])).toThrowErrorMatchingInlineSnapshot(
+      '"Receiver field is empty in \\"{\\"receiver\\":\\"\\"}\\""'
+    );
     expect(() =>
       checkCSV([{ receiver: '1' }, { receiver: '1' }])
     ).toThrowErrorMatchingInlineSnapshot('"Duplicate receivers"');
