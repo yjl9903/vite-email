@@ -4,7 +4,6 @@ import { build, createServer, mergeConfig, Plugin } from 'vite';
 import MarkdownItTitle from 'markdown-it-title';
 
 import type { UserConfig } from './types';
-import { getIndexHtml } from './utils';
 
 export const REPLACER = `<!-- email -->`;
 
@@ -24,6 +23,9 @@ export interface RenderOutput {
 
 export async function startDevServer(option: RenderOption) {
   return await createServer({
+    server: {
+      middlewareMode: 'ssr'
+    },
     plugins: [createMdPlugin({}, option.template, option.frontmatter)]
   });
 }
@@ -52,13 +54,7 @@ export async function render(option: RenderOption): Promise<RenderOutput> {
   };
 }
 
-function createMdPlugin(
-  ctx: Record<string, string>,
-  template: string,
-  frontmatter: Record<string, any> = {}
-): Plugin {
-  let root: string;
-
+export function createMarkownIt(frontmatter: Record<string, any> = {}) {
   const markdown = new MarkdownIt({
     html: true,
     linkify: true,
@@ -96,24 +92,19 @@ function createMdPlugin(
     return true;
   });
 
+  return markdown;
+}
+
+function createMdPlugin(
+  ctx: Record<string, string>,
+  template: string,
+  frontmatter: Record<string, any> = {}
+): Plugin {
+  const markdown = createMarkownIt(frontmatter);
+
   return {
     name: 'vmail:md',
-    configResolved(config) {
-      root = config.root!;
-    },
-    configureServer(server) {
-      return () => {
-        server.middlewares.use(async (req, res, next) => {
-          if (req.url!.endsWith('.html')) {
-            res.setHeader('Content-Type', 'text/html');
-            res.statusCode = 200;
-            res.end(await getIndexHtml(root));
-            return;
-          }
-          next();
-        });
-      };
-    },
+    apply: 'build',
     transformIndexHtml(html) {
       return html.replace(REPLACER, markdown.render(template, ctx));
     }
