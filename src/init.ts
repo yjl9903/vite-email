@@ -30,6 +30,7 @@ function writePackage(path: string) {
   const pkg = `{
   "private": true,
   "scripts": {
+    "dev": "vmail dev",
     "send": "vmail"
   },
   "dependencies": {
