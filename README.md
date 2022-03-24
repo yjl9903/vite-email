@@ -4,7 +4,7 @@
 
 Send emails rendered by Vite and Markdown-It automatically.
 
-![screenshot](./screenshot.png)
+<img src="./screenshot.png" alt="screenshot" style="box-shadow: 0 0 1rem rgba(0,0,0,0.5); zoom: 80%;">
 
 ## Installation
 
