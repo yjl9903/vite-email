@@ -86,6 +86,7 @@ export async function resolveOption(root: string, cliOption: CliOption): Promise
   const option: ResolvedOption = {
     vite: mergedViteConfig,
     template: fs.readFileSync(path.join(root, cliOption.md), 'utf8'),
+    frontmatter: emailConfig.frontmatter ?? {},
     email: mergedViteConfig.email as Required<ViteEmailConfig>,
     receivers
   };

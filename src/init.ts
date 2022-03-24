@@ -54,11 +54,17 @@ export default defineConfig({
   fs.writeFileSync(path, config, 'utf-8');
 }
 
-function writeEmail(root: string) {
-  fs.writeFileSync(path.join(root, 'email.md'), `# Hello {{ name }}\n`, 'utf-8');
-  fs.writeFileSync(path.join(root, 'data.csv'), `receiver,name\n`, 'utf-8');
+export const DEFAULT_INDEX_HTML = `<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Email</title>
+</head>
+<body>
+  <div>${REPLACER}</div>
+</body>
+</html>`;
 
-  const html = `<html>
+export const DEFAULT_INDEX_HTML_MAIN = `<html>
 <head>
   <meta charset="UTF-8">
   <title>Email</title>
@@ -68,7 +74,12 @@ function writeEmail(root: string) {
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>`;
-  fs.writeFileSync(path.join(root, 'index.html'), html, 'utf-8');
+
+function writeEmail(root: string) {
+  fs.writeFileSync(path.join(root, 'email.md'), `# Hello {{ name }}\n`, 'utf-8');
+  fs.writeFileSync(path.join(root, 'data.csv'), `receiver,name\n`, 'utf-8');
+
+  fs.writeFileSync(path.join(root, 'index.html'), DEFAULT_INDEX_HTML_MAIN, 'utf-8');
 
   fs.mkdirSync(path.join(root, 'src'));
 

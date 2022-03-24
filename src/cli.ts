@@ -5,10 +5,15 @@ import { lightRed } from 'kolorist';
 import { version } from '../package.json';
 
 import type { CliOption } from './types';
-import { send } from './send';
 import { init } from './init';
+import { send } from './send';
+import { dev } from './dev';
 
 const cli = cac();
+
+cli.command('init [root]', 'Init workspace').action(async (root: string | undefined) => {
+  await init(root);
+});
 
 cli
   .command('[root]', 'Send Email')
@@ -21,9 +26,12 @@ cli
     await send(root ?? './', option);
   });
 
-cli.command('init [root]', 'Init workspace').action(async (root: string | undefined) => {
-  await init(root);
-});
+cli
+  .command('dev [root]', 'Start dev server')
+  .option('--port <port>', 'port to listen to', { default: 3000 })
+  .action(async (root: string | undefined, option: { port: number }) => {
+    await dev(root ?? './', option.port);
+  });
 
 cli.version(version);
 
