@@ -106,8 +106,7 @@ const DevHtml = `<!DOCTYPE html>
   <body>
     <nav>
       <div class="text-gray-700">
-        <span class="font-bold mr-2 select-none">Receiver</span>
-        <span id="receiver"><!-- receiver --></span>
+        <span class="font-bold mr-2 select-none">Receiver</span><span id="receiver"><!-- receiver --></span>
       </div>
     </nav>
     <div id="main" class="font-none">
