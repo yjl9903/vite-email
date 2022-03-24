@@ -5,17 +5,22 @@ export type UserConfig = ViteUserConfig & { email?: ViteEmailConfig };
 export interface CsvConfig {
   /**
    * Path to csv
-   * 
+   *
    * @default 'data.csv'
    */
   filename?: string;
 
   /**
    * Get receiver field
-   * 
+   *
    * @default 'receiver'
    */
-  receiver?: string | ((frontmatter: Record<string, string>) => string)
+  receiver?: string | ((frontmatter: Record<string, string>) => string);
+
+  /**
+   * Get attachment field
+   */
+  attachment?: string | ((frontmatter: Record<string, string>) => string);
 }
 
 export interface ViteEmailConfig {

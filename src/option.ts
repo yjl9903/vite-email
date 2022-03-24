@@ -160,6 +160,31 @@ function parseCSV(receivers: Array<Record<string, string>>, config: CsvConfig = 
     }
   };
 
+  const getAttachment = (record: Record<string, string>): string[] => {
+    const parseAttachment = (text: string) => {
+      return text
+        .split(':')
+        .map((t) => t.trim())
+        .filter((t) => !!t);
+    };
+
+    const get = () => {
+      if (config.attachment) {
+        if (typeof config.attachment === 'string') {
+          return Reflect.get(record, config.attachment);
+        } else {
+          return config.attachment(record);
+        }
+      } else {
+        // default attachments
+        return (record.attachment ?? '') + ':' + (record.attachments ?? '');
+      }
+    };
+
+    const t = get();
+    return t ? parseAttachment(t) : [];
+  };
+
   for (const receiver of receivers) {
     const name = getReceiver(receiver);
     if (!name || name.length === 0) {
@@ -168,19 +193,8 @@ function parseCSV(receivers: Array<Record<string, string>>, config: CsvConfig = 
       names.push(name);
     }
 
-    const attachments: string[] = [];
-    const parseAttachment = (text: string) => {
-      return text
-        .split(':')
-        .map((t) => t.trim())
-        .filter((t) => !!t);
-    };
-    if (receiver.attachment) {
-      attachments.push(...parseAttachment(receiver.attachment));
-    }
-    if (receiver.attachments) {
-      attachments.push(...parseAttachment(receiver.attachments));
-    }
+    const attachments: string[] = getAttachment(receiver);
+
     res.push({
       receiver: name,
       subject: receiver.subject,
@@ -242,7 +256,7 @@ if (import.meta.vitest) {
       ]
     `);
 
-    expect(parseCSV([{ '姓名': '456' }], { receiver: r => r['姓名'] })).toMatchInlineSnapshot(`
+    expect(parseCSV([{ 姓名: '456' }], { receiver: (r) => r['姓名'] })).toMatchInlineSnapshot(`
       [
         {
           "attachments": [],
@@ -269,5 +283,58 @@ if (import.meta.vitest) {
       // @ts-ignore
       parseCSV([{ receiver: '1' }, { receiver: '1' }])
     ).toThrowErrorMatchingInlineSnapshot('"Duplicate receivers"');
+  });
+
+  it('parse attachment', () => {
+    expect(parseCSV([{ receiver: '123', attachment: '123', attachments: '456:789' }]))
+      .toMatchInlineSnapshot(`
+      [
+        {
+          "attachments": [
+            "123",
+            "456",
+            "789",
+          ],
+          "frontmatter": {
+            "attachment": "123",
+            "attachments": "456:789",
+            "receiver": "123",
+          },
+          "receiver": "123",
+          "subject": undefined,
+        },
+      ]
+    `);
+
+    expect(parseCSV([{ receiver: '123' }], { attachment: 'receiver' })).toMatchInlineSnapshot(`
+      [
+        {
+          "attachments": [
+            "123",
+          ],
+          "frontmatter": {
+            "receiver": "123",
+          },
+          "receiver": "123",
+          "subject": undefined,
+        },
+      ]
+    `);
+
+    expect(parseCSV([{ receiver: '123' }], { attachment: (r) => r['receiver'] }))
+      .toMatchInlineSnapshot(`
+      [
+        {
+          "attachments": [
+            "123",
+          ],
+          "frontmatter": {
+            "receiver": "123",
+          },
+          "receiver": "123",
+          "subject": undefined,
+        },
+      ]
+    `);
   });
 }
