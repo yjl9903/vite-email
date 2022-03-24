@@ -30,10 +30,10 @@ export async function render(option: RenderOption): Promise<RenderOutput> {
     mergeConfig(option.vite, {
       plugins: [
         createMdPlugin(ctx, option.template, option.frontmatter),
-        <Plugin>{
+        {
           name: 'vmail:index',
           apply: 'build',
-          transformIndexHtml(html) {
+          transformIndexHtml(html: string) {
             return html.replace(/<script[\s\S]*>[\s\S]*<\/script>/g, '');
           }
         }
@@ -100,13 +100,13 @@ function createMdPlugin(
   ctx: Record<string, string>,
   template: string,
   frontmatter: Record<string, any> = {}
-): Plugin {
+) {
   const markdown = createMarkownIt(frontmatter);
 
   return {
     name: 'vmail:md',
     apply: 'build',
-    transformIndexHtml(html) {
+    transformIndexHtml(html: string) {
       return html.replace(REPLACER, markdown.render(template, ctx));
     }
   };

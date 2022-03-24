@@ -6,7 +6,7 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
 import type { RenderOption } from './md';
 import type { CliOption, ViteEmailConfig, UserConfig } from './types';
 
-type Receiver = {
+export type Receiver = {
   receiver: string;
   subject?: string;
   attachments: string[];
