@@ -59,7 +59,10 @@ export async function send(root: string, cliOption: CliOption) {
             to: receiver.receiver,
             subject,
             html: output.content,
-            attachments: receiver.attachments.map((p) => ({ path: path.join(root, p) }))
+            attachments: receiver.attachments.map((p) => ({
+              filename: path.basename(p),
+              path: path.join(root, p)
+            }))
           });
         }
       } catch (error) {
