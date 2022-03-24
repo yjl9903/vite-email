@@ -29,11 +29,11 @@ npm install
 
 The created workspace contains some config files. `data.csv` stores the list of receivers and corresponding information. The `receiver` column specify the email of the receiver. `email.md` is the email content template to be rendered. You can use `{{ ... }}` to insert variable from `data.csv`.
 
-For example, here is `data.csv`.
+For [example](https://github.com/yjl9903/vite-plugin-email/tree/main/example), here is `data.csv`.
 
 ```csv
-receiver,name
-bot@github.com,Bot
+receiver,       name
+bot@github.com, Bot
 ```
 
 Here is `email.md`.
