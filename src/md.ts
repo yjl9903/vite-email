@@ -1,11 +1,14 @@
 import MarkdownIt from 'markdown-it';
 import { build, createServer, mergeConfig, Plugin } from 'vite';
+import { debug as createDebug } from 'debug';
 // @ts-ignore
 import MarkdownItTitle from 'markdown-it-title';
 
 import type { UserConfig } from './types';
 
 export const REPLACER = `<!-- email -->`;
+
+const debug = createDebug('vmail:md');
 
 export interface RenderOption {
   vite: UserConfig;
@@ -84,6 +87,7 @@ export function createMarkownIt(
             break;
           } else {
             // fail to find varName
+            debug(varName);
             throw new Error(`"${varName}" not found when render Markdown`);
           }
         } else {
@@ -123,6 +127,16 @@ if (import.meta.vitest) {
   it('parse md', () => {
     const md = createMarkownIt({ name: 'world', id: '123' });
     expect(md.render('# Hello {{ id }} - {{ name }}\n\nMy id is {{ id }}')).toMatchInlineSnapshot(`
+      "<h1>Hello 123 - world</h1>
+      <p>My id is 123</p>
+      "
+    `);
+  });
+
+  it('render zh key', () => {
+    const md = createMarkownIt({ 姓名: 'world', 编号1: '123' });
+    expect(md.render('# Hello {{ 编号1 }} - {{ 姓名 }}\n\nMy id is {{ 编号1 }}'))
+      .toMatchInlineSnapshot(`
       "<h1>Hello 123 - world</h1>
       <p>My id is 123</p>
       "

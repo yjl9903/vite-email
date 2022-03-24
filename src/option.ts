@@ -120,7 +120,12 @@ async function promptForPass() {
 export async function loadCSV(filePath: string): Promise<Receiver[]> {
   const content = fs.readFileSync(filePath, 'utf-8');
   const { parse } = await import('csv-parse/sync');
-  const result = parse(content, { columns: true, skip_empty_lines: true, trim: true });
+  const result = parse(content, {
+    encoding: 'utf-8',
+    columns: true,
+    skip_empty_lines: true,
+    trim: true
+  });
   return parseCSV(result);
 }
 
