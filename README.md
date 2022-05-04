@@ -1,6 +1,6 @@
-# vite-plugin-email
+# vite-email
 
-[![version](https://img.shields.io/npm/v/vite-plugin-email?color=rgb%2850%2C203%2C86%29&label=vite-plugin-email)](https://www.npmjs.com/package/yjl9903/vite-plugin-email) [![CI](https://github.com/yjl9903/vite-plugin-email/actions/workflows/ci.yml/badge.svg)](https://github.com/yjl9903/vite-plugin-email/actions/workflows/ci.yml)
+[![version](https://img.shields.io/npm/v/vite-email?color=rgb%2850%2C203%2C86%29&label=vite-email)](https://www.npmjs.com/package/yjl9903/vite-email) [![CI](https://github.com/yjl9903/vite-email/actions/workflows/ci.yml/badge.svg)](https://github.com/yjl9903/vite-email/actions/workflows/ci.yml)
 
 Send emails rendered by Vite and Markdown-It automatically.
 
@@ -9,13 +9,13 @@ Send emails rendered by Vite and Markdown-It automatically.
 ## Installation
 
 ```bash
-npm i -D vite-plugin-email
+npm i -D vite-email
 ```
 
 You can also install it globally.
 
 ```bash
-npm i -g vite-plugin-email
+npm i -g vite-email
 vmail --version
 ```
 
@@ -31,7 +31,7 @@ npm install
 
 The created workspace contains some config files. `data.csv` stores the list of receivers and corresponding information. The `receiver` column specify the email of the receiver. `email.md` is the email content template to be rendered. You can use `{{ ... }}` to insert variable from `data.csv`.
 
-For [example](https://github.com/yjl9903/vite-plugin-email/tree/main/example), here is `data.csv`.
+For [example](https://github.com/yjl9903/vite-email/tree/main/example), here is `data.csv`.
 
 ```csv
 receiver,       name

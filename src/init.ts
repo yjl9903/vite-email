@@ -35,14 +35,14 @@ function writePackage(path: string) {
   },
   "dependencies": {
     "github-markdown-css": "^5.1.0",
-    "vite-plugin-email": "^${version}"
+    "vite-email": "^${version}"
   }
 }`;
   fs.writeFileSync(path, pkg, 'utf-8');
 }
 
 function writeVite(path: string) {
-  const config = `import { defineConfig } from 'vite-plugin-email';
+  const config = `import { defineConfig } from 'vite-email';
 
 export default defineConfig({
   email: {

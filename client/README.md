@@ -1,6 +1,6 @@
 # Client
 
-Dev client for [vite-plugin-email](https://github.com/yjl9903/vite-plugin-email).
+Dev client for [vite-email](https://github.com/yjl9903/vite-email).
 
 ## License
 

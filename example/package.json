@@ -5,6 +5,6 @@
     "start": "vmail"
   },
   "dependencies": {
-    "vite-plugin-email": "workspace:*"
+    "vite-email": "workspace:*"
   }
 }

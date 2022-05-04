@@ -28,7 +28,7 @@ importers:
       ufo: ^0.8.1
       unbuild: ^0.7.0
       vite: ^2.8.6
-      vite-plugin-email: workspace:*
+      vite-email: workspace:*
       vite-plugin-singlefile: ^0.7.1
       vitest: ^0.7.9
     dependencies:
@@ -58,7 +58,7 @@ importers:
       prettier: 2.6.0
       typescript: 4.6.2
       unbuild: 0.7.0
-      vite-plugin-email: 'link:'
+      vite-email: 'link:'
       vitest: 0.7.9
 
   client:
@@ -70,7 +70,7 @@ importers:
       unocss: ^0.30.0
       unplugin-icons: ^0.14.1
       vite: ^2.8.0
-      vite-plugin-email: workspace:*
+      vite-email: workspace:*
       vite-plugin-inspect: ^0.4.3
       vue: ^3.2.25
       vue-router: '4'
@@ -86,13 +86,13 @@ importers:
       unocss: 0.30.1_debug@4.3.4
       unplugin-icons: 0.14.1_vite@2.8.6
       vite: 2.8.6
-      vite-plugin-email: link:..
+      vite-email: link:..
 
   example:
     specifiers:
-      vite-plugin-email: workspace:*
+      vite-email: workspace:*
     dependencies:
-      vite-plugin-email: link:..
+      vite-email: link:..
 
 packages:
 

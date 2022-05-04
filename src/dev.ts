@@ -89,7 +89,7 @@ async function getIndexHtml(root: string) {
 
 function printDevInfo(port: number) {
   console.log();
-  console.log(`${bold('  vite-plugin-email')} ${cyan(`v${version}`)}`);
+  console.log(`${bold('  vite-email')} ${cyan(`v${version}`)}`);
 
   if (port) {
     console.log();

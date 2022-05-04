@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite-plugin-email';
+import { defineConfig } from 'vite-email';
 
 export default defineConfig({
   email: {

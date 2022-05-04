@@ -1,5 +1,5 @@
 {
-  "name": "vite-plugin-email",
+  "name": "vite-email",
   "version": "0.6.2",
   "description": "",
   "keywords": [
@@ -7,13 +7,13 @@
     "vite-plugin",
     "email"
   ],
-  "homepage": "https://github.com/yjl9903/vite-plugin-email#readme",
+  "homepage": "https://github.com/yjl9903/vite-email#readme",
   "bugs": {
-    "url": "https://github.com/yjl9903/vite-plugin-email/issues"
+    "url": "https://github.com/yjl9903/vite-email/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yjl9903/vite-plugin-email.git"
+    "url": "git+https://github.com/yjl9903/vite-email.git"
   },
   "license": "MIT",
   "author": "XLor",
@@ -74,7 +74,7 @@
     "prettier": "^2.6.0",
     "typescript": "^4.6.2",
     "unbuild": "^0.7.0",
-    "vite-plugin-email": "workspace:*",
+    "vite-email": "workspace:*",
     "vitest": "^0.7.9"
   },
   "packageManager": "pnpm@6.32.3"

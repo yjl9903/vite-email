@@ -38,7 +38,7 @@ watch(preview, update, { immediate: true });
         </button>
         <a
           class="icon-btn text-lg px-[6px]"
-          href="https://github.com/yjl9903/vite-plugin-email"
+          href="https://github.com/yjl9903/vite-email"
           target="_blank"
         >
           <IconGithub></IconGithub>

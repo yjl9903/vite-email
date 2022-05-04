@@ -18,6 +18,6 @@
     "unocss": "^0.30.0",
     "unplugin-icons": "^0.14.1",
     "vite": "^2.8.0",
-    "vite-plugin-email": "workspace:*"
+    "vite-email": "workspace:*"
   }
 }

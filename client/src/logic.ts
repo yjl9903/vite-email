@@ -1,4 +1,4 @@
-import type { Receiver } from 'vite-plugin-email';
+import type { Receiver } from 'vite-email';
 import { ref } from 'vue';
 
 export function useStore() {

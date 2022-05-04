@@ -1,6 +1,6 @@
 # Example
 
-Example for [vite-plugin-email](https://github.com/yjl9903/vite-plugin-email).
+Example for [vite-email](https://github.com/yjl9903/vite-email).
 
 ## License
 
