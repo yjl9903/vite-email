@@ -26,7 +26,7 @@ watch(preview, update, { immediate: true });
         <span id="receiver">{{ preview }}</span>
       </div>
       <div class="inline-block" v-else>
-        <span class="font-bold">Vite Plugin Email</span>
+        <span class="font-bold">Vite Email</span>
       </div>
 
       <div class="inline-block">
