@@ -13,7 +13,7 @@ export default defineConfig({
   base: '/__email/',
   plugins: [
     vue(),
-    Icons(),
+    Icons({ autoInstall: true }),
     Unocss({ presets: [presetUno(), presetAttributify()], transformers: [transformerDirective()] }),
     Inspect()
   ],

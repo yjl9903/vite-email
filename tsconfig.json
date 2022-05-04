@@ -10,6 +10,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "jsx": "preserve",
     "types": [
       "vitest/importMeta"
     ],
