@@ -60,7 +60,7 @@
     "sirv": "^2.0.2",
     "ufo": "^0.8.1",
     "vite": "^2.8.6",
-    "vite-plugin-singlefile": "^0.7.1"
+    "vite-plugin-singlefile": "^0.9.0"
   },
   "devDependencies": {
     "@types/cli-progress": "^3.9.2",
