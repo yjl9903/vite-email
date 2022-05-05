@@ -1,6 +1,6 @@
 # vite-email
 
-[![version](https://img.shields.io/npm/v/vite-email?color=rgb%2850%2C203%2C86%29&label=vite-email)](https://www.npmjs.com/package/yjl9903/vite-email) [![CI](https://github.com/yjl9903/vite-email/actions/workflows/ci.yml/badge.svg)](https://github.com/yjl9903/vite-email/actions/workflows/ci.yml)
+[![version](https://img.shields.io/npm/v/vite-email?color=rgb%2850%2C203%2C86%29&label=vite-email)](https://www.npmjs.com/package/vite-email) [![CI](https://github.com/yjl9903/vite-email/actions/workflows/ci.yml/badge.svg)](https://github.com/yjl9903/vite-email/actions/workflows/ci.yml)
 
 Send emails rendered by Vite and Markdown-It automatically.
 
