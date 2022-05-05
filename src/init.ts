@@ -49,7 +49,8 @@ export default defineConfig({
     host: '<host>',
     secure: true,
     auth: {
-      user: process.env.user
+      user: undefined,
+      pass: undefined
     }
   }
 });`;
