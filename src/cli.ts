@@ -9,7 +9,7 @@ import { init } from './init';
 import { send } from './send';
 import { dev } from './dev';
 
-const cli = cac();
+const cli = cac('vmail');
 
 cli.command('init [root]', 'Init workspace').action(async (root: string | undefined) => {
   await init(root);
