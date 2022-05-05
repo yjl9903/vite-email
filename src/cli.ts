@@ -13,6 +13,7 @@ const cli = cac('vmail');
 
 cli
   .command('[root]', 'Send Email')
+  .alias('send')
   .option('--md <template>', 'Markdown template path', { default: 'email.md' })
   .option('--no-send', 'Disable email sending')
   .option('--send [receiver]', 'Send email to receiver')
