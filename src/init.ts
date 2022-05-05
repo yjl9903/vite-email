@@ -76,7 +76,11 @@ function writeEmail(root: string) {
 
   fs.mkdirSync(path.join(root, 'src'));
 
-  fs.writeFileSync(path.join(root, 'src/main.js'), `import './style.css';`, 'utf-8');
+  fs.writeFileSync(
+    path.join(root, 'src/main.js'),
+    `import 'github-markdown-css';\nimport './style.css';`,
+    'utf-8'
+  );
 
   fs.writeFileSync(path.join(root, 'src/style.css'), `h1 { display: none; }`, 'utf-8');
 }
