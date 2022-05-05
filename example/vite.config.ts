@@ -6,6 +6,13 @@ export default defineConfig({
     secure: true,
     auth: {
       user: 'yan_jl@yeah.net'
+    },
+    frontmatter: {
+      today: new Date().toLocaleDateString(),
+      author: 'XLor',
+      upperName({ name }) {
+        return name.toLocaleUpperCase();
+      }
     }
   }
 });
