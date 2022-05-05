@@ -53,7 +53,7 @@
     "csv-stringify": "^6.0.5",
     "debug": "^4.3.4",
     "kolorist": "^1.5.1",
-    "markdown-it": "^12.3.2",
+    "markdown-it": "^13.0.1",
     "markdown-it-title": "^4.0.0",
     "nodemailer": "^6.7.3",
     "prompts": "^2.4.2",
