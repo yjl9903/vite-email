@@ -4,7 +4,7 @@ import { loadConfigFromFile, mergeConfig, normalizePath } from 'vite';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 
 import type { RenderOption } from './md';
-import type { CliOption, ViteEmailConfig, UserConfig, CsvConfig } from './types';
+import type { CliOption, ViteEmailConfig, UserConfig, FrontmatterFn } from './types';
 
 export type Receiver = {
   receiver: string;
@@ -65,16 +65,10 @@ export async function resolveOption(root: string, cliOption: CliOption): Promise
     receivers.push({ receiver: cliOption.send, attachments: [], frontmatter: {} });
   } else {
     if (!emailConfig.csv) {
-      emailConfig.csv = { filename: 'data.csv' };
+      emailConfig.csv = 'data.csv';
     }
-    if (typeof emailConfig.csv === 'string') {
-      emailConfig.csv = { filename: emailConfig.csv };
-    }
-    if (!emailConfig.csv!.filename) {
-      emailConfig.csv.filename = 'data.csv';
-    }
-    const csvPath = path.join(root, emailConfig?.csv?.filename ?? 'data.csv');
-    receivers.push(...(await loadCSV(csvPath, emailConfig.csv)));
+    const csvPath = path.join(root, emailConfig.csv!);
+    receivers.push(...(await loadCSV(csvPath, emailConfig.frontmatter)));
   }
 
   // 1. Cli Option (overwrite vite config)
@@ -85,7 +79,7 @@ export async function resolveOption(root: string, cliOption: CliOption): Promise
     emailConfig.auth!.pass = cliOption.pass;
   }
 
-  // 2. Prompt user
+  // 2. Prompt user / pass
   if (emailConfig.enable) {
     if (!emailConfig.auth!.user) {
       emailConfig.auth!.user = await promptForUser();
@@ -131,7 +125,10 @@ async function promptForPass() {
   return pass;
 }
 
-export async function loadCSV(filePath: string, config: CsvConfig = {}): Promise<Receiver[]> {
+export async function loadCSV(
+  filePath: string,
+  frontmatter: Record<string, string | FrontmatterFn> = {}
+): Promise<Receiver[]> {
   const content = fs.readFileSync(filePath, 'utf-8');
   const { parse } = await import('csv-parse/sync');
   const result = parse(content, {
@@ -140,52 +137,64 @@ export async function loadCSV(filePath: string, config: CsvConfig = {}): Promise
     skip_empty_lines: true,
     trim: true
   });
-  return parseCSV(result, config);
+  return parseCSV(result, frontmatter);
 }
 
-function parseCSV(receivers: Array<Record<string, string>>, config: CsvConfig = {}): Receiver[] {
+function parseCSV(
+  rawData: Array<Record<string, string>>,
+  frontmatter: Record<string, string | FrontmatterFn> = {}
+): Receiver[] {
   const names: string[] = [];
-  const res: Receiver[] = [];
+  const receivers: Receiver[] = [];
 
-  const getReceiver = (record: Record<string, string>): string | undefined => {
-    if (config.receiver) {
-      if (typeof config.receiver === 'string') {
-        return Reflect.get(record, config.receiver);
+  const getField = (record: Record<string, string>, field: string) => {
+    if (field in record) {
+      return record[field];
+    } else if (field in frontmatter) {
+      const defaultValue = frontmatter[field];
+      if (typeof defaultValue === 'string') {
+        return defaultValue;
+      } else if (typeof defaultValue === 'function') {
+        return defaultValue(record);
       } else {
-        return config.receiver(record);
+        return undefined;
       }
-    } else {
-      // default receiver
-      return record.receiver;
     }
   };
 
+  const getReceiver = (record: Record<string, string>): string | undefined =>
+    getField(record, 'receiver');
+
   const getAttachment = (record: Record<string, string>): string[] => {
-    const parseAttachment = (text: string) => {
-      return text
-        .split(':')
-        .map((t) => t.trim())
-        .filter((t) => !!t);
-    };
+    const rawAttachment =
+      (getField(record, 'attachment') ?? '') + ':' + (getField(record, 'attachments') ?? '');
 
-    const get = () => {
-      if (config.attachment) {
-        if (typeof config.attachment === 'string') {
-          return Reflect.get(record, config.attachment);
-        } else {
-          return config.attachment(record);
-        }
-      } else {
-        // default attachments
-        return (record.attachment ?? '') + ':' + (record.attachments ?? '');
-      }
-    };
-
-    const t = get();
-    return t ? parseAttachment(t) : [];
+    return rawAttachment
+      .split(':')
+      .map((t) => t.trim())
+      .filter(Boolean);
   };
 
-  for (const receiver of receivers) {
+  const getExtraField = (record: Record<string, string>): Record<string, string> => {
+    const extra: Record<string, string> = {};
+    for (const key in frontmatter) {
+      if (
+        key === 'receiver' ||
+        key === 'subject' ||
+        key === 'attachment' ||
+        key === 'attachments'
+      ) {
+        continue;
+      }
+      const value = getField(record, key);
+      if (value) {
+        extra[key] = value;
+      }
+    }
+    return extra;
+  };
+
+  for (const receiver of rawData) {
     const name = getReceiver(receiver);
     if (!name || name.length === 0) {
       throw new Error(`Get receiver fail in "${JSON.stringify(receiver)}"`);
@@ -195,17 +204,22 @@ function parseCSV(receivers: Array<Record<string, string>>, config: CsvConfig = 
 
     const attachments: string[] = getAttachment(receiver);
 
-    res.push({
+    receivers.push({
       receiver: name,
-      subject: receiver.subject,
+      subject: getField(receiver, 'subject'),
       attachments,
-      frontmatter: receiver
+      frontmatter: {
+        ...getExtraField(receiver),
+        ...receiver
+      }
     });
   }
+
   if (new Set(names).size !== names.length) {
     throw new Error('Duplicate receivers');
   }
-  return res;
+
+  return receivers;
 }
 
 export async function writeCSV(filePath: string, arr: Array<Receiver>) {
@@ -249,6 +263,20 @@ if (import.meta.vitest) {
           "attachments": [],
           "frontmatter": {
             "name": "123",
+          },
+          "receiver": "name",
+          "subject": undefined,
+        },
+      ]
+    `);
+
+    expect(parseCSV([{ receiver: '123' }], { name: 'abc' })).toMatchInlineSnapshot(`
+      [
+        {
+          "attachments": [],
+          "frontmatter": {
+            "name": "abc",
+            "receiver": "123",
           },
           "receiver": "123",
           "subject": undefined,
@@ -306,11 +334,11 @@ if (import.meta.vitest) {
       ]
     `);
 
-    expect(parseCSV([{ receiver: '123' }], { attachment: 'receiver' })).toMatchInlineSnapshot(`
+    expect(parseCSV([{ receiver: '123' }], { attachment: 'pdf' })).toMatchInlineSnapshot(`
       [
         {
           "attachments": [
-            "123",
+            "pdf",
           ],
           "frontmatter": {
             "receiver": "123",
@@ -321,20 +349,20 @@ if (import.meta.vitest) {
       ]
     `);
 
-    expect(parseCSV([{ receiver: '123' }], { attachment: (r) => r['receiver'] }))
+    expect(parseCSV([{ receiver: '123' }], { attachment: (r) => r['receiver'] + '.pdf' }))
       .toMatchInlineSnapshot(`
-      [
-        {
-          "attachments": [
-            "123",
-          ],
-          "frontmatter": {
+        [
+          {
+            "attachments": [
+              "123.pdf",
+            ],
+            "frontmatter": {
+              "receiver": "123",
+            },
             "receiver": "123",
+            "subject": undefined,
           },
-          "receiver": "123",
-          "subject": undefined,
-        },
-      ]
-    `);
+        ]
+      `);
   });
 }

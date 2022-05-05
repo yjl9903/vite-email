@@ -70,7 +70,6 @@
     "@types/nodemailer": "^6.4.4",
     "@types/prompts": "^2.0.14",
     "bumpp": "^7.1.1",
-    "pnpm": "^7.0.0",
     "prettier": "^2.6.0",
     "typescript": "^4.6.2",
     "unbuild": "^0.7.0",
