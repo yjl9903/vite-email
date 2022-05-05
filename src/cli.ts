@@ -11,10 +11,6 @@ import { dev } from './dev';
 
 const cli = cac('vmail');
 
-cli.command('init [root]', 'Init workspace').action(async (root: string | undefined) => {
-  await init(root);
-});
-
 cli
   .command('[root]', 'Send Email')
   .option('--md <template>', 'Markdown template path', { default: 'email.md' })
@@ -33,6 +29,10 @@ cli
   .action(async (root: string | undefined, option: { port: number; md: string }) => {
     await dev(root ?? './', option.md, option.port);
   });
+
+cli.command('init [root]', 'Init workspace').action(async (root: string | undefined) => {
+  await init(root);
+});
 
 cli.version(version);
 
