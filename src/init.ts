@@ -51,7 +51,8 @@ export default defineConfig({
     auth: {
       user: undefined,
       pass: undefined
-    }
+    },
+    sleep: 1000
   }
 });`;
   fs.writeFileSync(path, config, 'utf-8');
