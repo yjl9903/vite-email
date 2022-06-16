@@ -76,5 +76,5 @@
     "vite-email": "workspace:*",
     "vitest": "^0.14.1"
   },
-  "packageManager": "pnpm@7.1.9"
+  "packageManager": "pnpm@7.2.1"
 }
