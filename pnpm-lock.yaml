@@ -10,7 +10,7 @@ importers:
       '@types/node': ^17.0.40
       '@types/nodemailer': ^6.4.4
       '@types/prompts': ^2.4.0
-      bumpp: 8.2.0
+      bumpp: 8.2.1
       cac: ^6.7.12
       cli-progress: ^3.11.1
       csv-parse: ^5.1.0
@@ -52,7 +52,7 @@ importers:
       '@types/node': 17.0.40
       '@types/nodemailer': 6.4.4
       '@types/prompts': 2.4.0
-      bumpp: 8.2.0
+      bumpp: 8.2.1
       prettier: 2.6.2
       typescript: 4.7.3
       unbuild: 0.7.4
@@ -831,8 +831,8 @@ packages:
     resolution: {integrity: sha512-lGzLKcioL90C7wMczpkY0n/oART3MbBa8R9OFGE1rJxoVI86u4WAGfEk8Wjv10eKSyTHVGkSo3bvBylCEtk7LA==}
     engines: {node: '>=6'}
 
-  /bumpp/8.2.0:
-    resolution: {integrity: sha512-DhFa4DSREOwnHJQyQ+Qhj9pUJAIZKMEtuHN7BuQij4CoxSBc6n4bBZnlvFWuLXNMr0aCtsMXnkQWC/7GyGypYw==}
+  /bumpp/8.2.1:
+    resolution: {integrity: sha512-4tHKsWC2mqHQvdjZ4AXgVhS2xMsz8qQ4zYt87vGRXW5tqAjrYa/UJqy7s/dGYI2OIe9ghBdiFhKpyKEX9SXffg==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
