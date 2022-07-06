@@ -19,7 +19,7 @@ importers:
       kolorist: ^1.5.1
       markdown-it: ^13.0.1
       markdown-it-title: ^4.0.0
-      nodemailer: ^6.7.5
+      nodemailer: ^6.7.7
       prettier: ^2.7.1
       prompts: ^2.4.2
       sirv: ^2.0.2
@@ -39,7 +39,7 @@ importers:
       kolorist: 1.5.1
       markdown-it: 13.0.1
       markdown-it-title: 4.0.0
-      nodemailer: 6.7.5
+      nodemailer: 6.7.7
       prompts: 2.4.2
       sirv: 2.0.2
       ufo: 0.8.4
@@ -1870,8 +1870,8 @@ packages:
     resolution: {integrity: sha512-XxYDdcQ6eKqp/YjI+tb2C5WM2LgjnZrfYg4vgQt49EK268b6gYCHsBLrK2qvJo4FmCtqmKezb0WZFK4fkrZNsg==}
     dev: true
 
-  /nodemailer/6.7.5:
-    resolution: {integrity: sha512-6VtMpwhsrixq1HDYSBBHvW0GwiWawE75dS3oal48VqRhUvKJNnKnJo2RI/bCVQubj1vgrgscMNW4DHaD6xtMCg==}
+  /nodemailer/6.7.7:
+    resolution: {integrity: sha512-pOLC/s+2I1EXuSqO5Wa34i3kXZG3gugDssH+ZNCevHad65tc8vQlCQpOLaUjopvkRQKm2Cki2aME7fEOPRy3bA==}
     engines: {node: '>=6.0.0'}
     dev: false
 
