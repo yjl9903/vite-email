@@ -7,14 +7,14 @@ importers:
       '@types/cli-progress': ^3.11.0
       '@types/debug': ^4.1.7
       '@types/markdown-it': ^12.2.3
-      '@types/node': ^18.0.0
+      '@types/node': ^18.0.3
       '@types/nodemailer': ^6.4.4
       '@types/prompts': ^2.4.0
       bumpp: 8.2.1
       cac: ^6.7.12
       cli-progress: ^3.11.2
       csv-parse: ^5.3.0
-      csv-stringify: ^6.1.3
+      csv-stringify: ^6.2.0
       debug: ^4.3.4
       kolorist: ^1.5.1
       markdown-it: ^13.0.1
@@ -24,17 +24,16 @@ importers:
       prompts: ^2.4.2
       sirv: ^2.0.2
       typescript: ^4.7.4
-      ufo: ^0.8.4
+      ufo: ^0.8.5
       unbuild: ^0.7.4
-      vite: ^2.9.13
-      vite-email: workspace:*
+      vite: ^2.9.14
       vite-plugin-singlefile: 0.7.2
-      vitest: 0.17.0
+      vitest: 0.18.0
     dependencies:
       cac: 6.7.12
       cli-progress: 3.11.2
       csv-parse: 5.3.0
-      csv-stringify: 6.1.3
+      csv-stringify: 6.2.0
       debug: 4.3.4
       kolorist: 1.5.1
       markdown-it: 13.0.1
@@ -42,22 +41,21 @@ importers:
       nodemailer: 6.7.7
       prompts: 2.4.2
       sirv: 2.0.2
-      ufo: 0.8.4
-      vite: 2.9.13
-      vite-plugin-singlefile: 0.7.2_vite@2.9.13
+      ufo: 0.8.5
+      vite: 2.9.14
+      vite-plugin-singlefile: 0.7.2_vite@2.9.14
     devDependencies:
       '@types/cli-progress': 3.11.0
       '@types/debug': 4.1.7
       '@types/markdown-it': 12.2.3
-      '@types/node': 18.0.0
+      '@types/node': 18.0.3
       '@types/nodemailer': 6.4.4
       '@types/prompts': 2.4.0
       bumpp: 8.2.1
       prettier: 2.7.1
       typescript: 4.7.4
       unbuild: 0.7.4
-      vite-email: 'link:'
-      vitest: 0.17.0
+      vitest: 0.18.0
 
   client:
     specifiers:
@@ -488,7 +486,7 @@ packages:
   /@types/cli-progress/3.11.0:
     resolution: {integrity: sha512-XhXhBv1R/q2ahF3BM7qT5HLzJNlIL0wbcGyZVjqOTqAybAnsLisd7gy1UCyIqpL+5Iv6XhlSyzjLCnI2sIdbCg==}
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.0.3
     dev: true
 
   /@types/debug/4.1.7:
@@ -523,13 +521,13 @@ packages:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: true
 
-  /@types/node/18.0.0:
-    resolution: {integrity: sha512-cHlGmko4gWLVI27cGJntjs/Sj8th9aYwplmZFwmmgYQQvL5NUsgVJG7OddLvNfLqYS31KFN0s3qlaD9qCaxACA==}
+  /@types/node/18.0.3:
+    resolution: {integrity: sha512-HzNRZtp4eepNitP+BD6k2L6DROIDG4Q0fm4x+dwfsr6LGmROENnok75VGw40628xf+iR24WeMFcHuuBDUAzzsQ==}
 
   /@types/nodemailer/6.4.4:
     resolution: {integrity: sha512-Ksw4t7iliXeYGvIQcSIgWQ5BLuC/mljIEbjf615svhZL10PE9t+ei8O9gDaD3FPCasUJn9KTLwz2JFJyiiyuqw==}
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.0.3
     dev: true
 
   /@types/prompts/2.4.0:
@@ -539,7 +537,7 @@ packages:
   /@types/resolve/1.17.1:
     resolution: {integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==}
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.0.3
 
   /@unocss/cli/0.44.0:
     resolution: {integrity: sha512-hnIPU3WcMfXTQ7w4swHjkr+WgMK2brXw2nm2XS8zv5rqZ76faV99bqrTn1Dhu3jiIU77dGZ6Y6QnDBjgxY3qrg==}
@@ -1001,8 +999,8 @@ packages:
     resolution: {integrity: sha512-UXJCGwvJ2fep39purtAn27OUYmxB1JQto+zhZ4QlJpzsirtSFbzLvip1aIgziqNdZp/TptvsKEV5BZSxe10/DQ==}
     dev: false
 
-  /csv-stringify/6.1.3:
-    resolution: {integrity: sha512-jK2oj6VQafoke0uBXYqYhlwLg4d5qNYjikld+oMgdkOiSiFJygDfQJsiK67igX13Vb/DFnCJexnlhiSErjKR4g==}
+  /csv-stringify/6.2.0:
+    resolution: {integrity: sha512-dcUbQLRTTDcgQxgEU8V9IctkaCwHZjZfzUZ5ZB3RY8Y+pXtdtl5iVQHfGzANytFFkRKanYzBXrkfpNdGR7eviA==}
     dev: false
 
   /debug/4.3.4:
@@ -2231,6 +2229,11 @@ packages:
 
   /ufo/0.8.4:
     resolution: {integrity: sha512-/+BmBDe8GvlB2nIflWasLLAInjYG0bC9HRnfEpNi4sw77J2AJNnEVnTDReVrehoh825+Q/evF3THXTAweyam2g==}
+    dev: true
+
+  /ufo/0.8.5:
+    resolution: {integrity: sha512-e4+UtA5IRO+ha6hYklwj6r7BjiGMxS0O+UaSg9HbaTefg4kMkzj4tXzEBajRR+wkxf+golgAWKzLbytCUDMJAA==}
+    dev: false
 
   /unbuild/0.7.4:
     resolution: {integrity: sha512-gJvfMw4h5Q7xieMCeW/d3wtNKZDpFyDR9651s8kL+AGp95sMNhAFRLxy24AUKC3b5EQbB74vaDoU5R+XwsZC6A==}
@@ -2397,7 +2400,7 @@ packages:
       - supports-color
     dev: true
 
-  /vite-plugin-singlefile/0.7.2_vite@2.9.13:
+  /vite-plugin-singlefile/0.7.2_vite@2.9.14:
     resolution: {integrity: sha512-TLs5e2f7CzLD1kqvEYxP1d5ehrI1twVoDJwPeGLEMHNZR6M/M69CmRNiJQHfRUkb6uK0O/snaWsSDA7SgVi81A==}
     peerDependencies:
       vite: ^2.9.1
@@ -2407,33 +2410,10 @@ packages:
       esbuild: 0.14.38
       rollup: 2.70.1
       rollup-plugin-esbuild: 4.9.1_vioqp3gnyr4eeol67lf6zyna6a
-      vite: 2.9.13
+      vite: 2.9.14
     transitivePeerDependencies:
       - supports-color
     dev: false
-
-  /vite/2.9.13:
-    resolution: {integrity: sha512-AsOBAaT0AD7Mhe8DuK+/kE4aWYFMx/i0ZNi98hJclxb4e0OhQcZYUrvLjIaQ8e59Ui7txcvKMiJC1yftqpQoDw==}
-    engines: {node: '>=12.2.0'}
-    hasBin: true
-    peerDependencies:
-      less: '*'
-      sass: '*'
-      stylus: '*'
-    peerDependenciesMeta:
-      less:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-    dependencies:
-      esbuild: 0.14.38
-      postcss: 8.4.13
-      resolve: 1.22.0
-      rollup: 2.70.1
-    optionalDependencies:
-      fsevents: 2.3.2
 
   /vite/2.9.14:
     resolution: {integrity: sha512-P/UCjSpSMcE54r4mPak55hWAZPlyfS369svib/gpmz8/01L822lMPOJ/RYW6tLCe1RPvMvOsJ17erf55bKp4Hw==}
@@ -2457,10 +2437,9 @@ packages:
       rollup: 2.70.1
     optionalDependencies:
       fsevents: 2.3.2
-    dev: true
 
-  /vitest/0.17.0:
-    resolution: {integrity: sha512-5YO9ubHo0Zg35mea3+zZAr4sCku32C3usvIH5COeJB48TZV/R0J9aGNtGOOqEWZYfOKP0pGZUvTokne3x/QEFg==}
+  /vitest/0.18.0:
+    resolution: {integrity: sha512-ryAtlh5Gvg3+aLNuOQ8YOHxgQCCu46jx40X5MBL0K0/ejB9i5zsr8fV8LTGXbXex80UMHlzceI9F+ouGaiR+mQ==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
     peerDependencies:
@@ -2483,13 +2462,13 @@ packages:
     dependencies:
       '@types/chai': 4.3.1
       '@types/chai-subset': 1.3.3
-      '@types/node': 18.0.0
+      '@types/node': 18.0.3
       chai: 4.3.6
       debug: 4.3.4
       local-pkg: 0.4.1
       tinypool: 0.2.1
       tinyspy: 0.3.3
-      vite: 2.9.13
+      vite: 2.9.14
     transitivePeerDependencies:
       - less
       - sass
