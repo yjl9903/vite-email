@@ -13,7 +13,7 @@
     "@iconify-json/carbon": "^1.1.6",
     "@iconify-json/ic": "^1.1.6",
     "@iconify-json/mdi": "^1.1.24",
-    "@unocss/preset-attributify": "^0.41.1",
+    "@unocss/preset-attributify": "^0.44.0",
     "@unocss/transformer-directives": "^0.41.1",
     "@vitejs/plugin-vue": "^2.3.3",
     "unocss": "^0.41.1",
