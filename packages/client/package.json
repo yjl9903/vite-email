@@ -21,5 +21,6 @@
     "vite": "^4.1.1",
     "vite-email": "workspace:*",
     "vite-plugin-inspect": "^0.7.15"
-  }
+  },
+  "version": "0.8.0"
 }
