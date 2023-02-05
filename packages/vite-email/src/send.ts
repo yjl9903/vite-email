@@ -1,11 +1,14 @@
-import fs from 'fs';
 import path from 'path';
+import fs from 'fs-extra';
+
 import { lightGreen, cyan, lightRed, green, red, hidden } from '@breadc/color';
 
 import type { CliOption } from './types';
-import { render, REPLACER } from './md';
+
 import { sleep } from './utils';
-import { resolveOption, writeCSV } from './option';
+import { resolveOption } from './option';
+import { render, REPLACER } from './render';
+import { loadDataSource, writeCSV } from './loader';
 
 export async function send(root: string, cliOption: CliOption) {
   const indexPath = path.join(root, 'index.html');
@@ -16,36 +19,36 @@ export async function send(root: string, cliOption: CliOption) {
 
   const option = await resolveOption(root, cliOption);
   const emailConfig = option.email;
-  const bar = await createProgressBar(option.receivers.length);
+
+  const receivers = await loadDataSource(option);
+  const bar = await createProgressBar(receivers.length);
 
   try {
     const { createTransport } = await import('nodemailer');
     const transport = createTransport(emailConfig);
 
-    try {
-      await transport.verify();
-    } catch (error) {
-      bar.log(`${lightRed('Verify Error')} ${(error as any).message ?? 'Unknown'}`);
-      return;
+    if (!cliOption.dryRun) {
+      try {
+        await transport.verify();
+      } catch (error) {
+        bar.log(`${lightRed('Verify Error')} ${(error as any).message ?? 'Unknown'}`);
+        return;
+      }
+    } else {
     }
 
     const failList: Array<any> = [];
 
-    for (const receiver of option.receivers) {
-      if (receiver !== option.receivers[0]) {
+    for (const receiver of receivers) {
+      if (receiver !== receivers[0]) {
         await sleep(emailConfig.sleep ?? 1000);
       }
 
       try {
         bar.update('render', receiver.receiver);
 
-        option.frontmatter = {
-          ...emailConfig.frontmatter,
-          ...receiver.frontmatter
-        };
-
-        const output = await render(option);
-        const subject = receiver.subject ?? output.subject;
+        const output = await render(receiver, option);
+        const subject = output.subject;
         if (!subject) {
           // handle empty subject
           throw new Error('You should set subject in your csv or in the title of Markdown');
@@ -53,7 +56,7 @@ export async function send(root: string, cliOption: CliOption) {
 
         bar.update('send', receiver.receiver, subject);
 
-        if (emailConfig.enable) {
+        if (!cliOption.dryRun) {
           await transport.sendMail({
             from: emailConfig.sender,
             to: receiver.receiver,
@@ -64,6 +67,7 @@ export async function send(root: string, cliOption: CliOption) {
               path: path.join(root, p)
             }))
           });
+        } else {
         }
       } catch (error) {
         bar.log(
@@ -79,7 +83,7 @@ export async function send(root: string, cliOption: CliOption) {
       bar.log('');
       bar.log(
         `${failList.length === 0 ? green('√') : red('✗')} There are ${
-          option.receivers.length - failList.length
+          receivers.length - failList.length
         } emails has been sent successfully`
       );
 

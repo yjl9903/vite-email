@@ -1,5 +1,26 @@
 import type { UserConfig as ViteUserConfig } from 'vite';
 
+export interface RenderOutput {
+  content: string;
+
+  subject?: string;
+}
+
+export type Receiver = {
+  receiver: string;
+  subject?: string;
+  attachments: string[];
+  frontmatter: Record<string, string>;
+};
+
+export type ResolvedOption = {
+  root: string;
+  vite: UserConfig;
+  template: string;
+  source: string;
+  email: Required<ViteEmailConfig>;
+};
+
 export type UserConfig = ViteUserConfig & { email?: ViteEmailConfig };
 
 export type FrontmatterFn = (frontmatter: Record<string, string>) => string;
@@ -29,7 +50,7 @@ export interface ViteEmailConfig {
    *
    * @default 'data.csv'
    */
-  csv?: string;
+  source?: string;
 
   /**
    * Sleep time between continuous sending
@@ -72,11 +93,20 @@ export interface ViteEmailConfig {
 export interface CliOption {
   dryRun: boolean;
 
+  /**
+   * Email receiver
+   */
   send: string;
 
-  user?: string | undefined;
+  /**
+   * Email sender username
+   */
+  user: string;
 
-  pass?: string | undefined;
+  /**
+   * Email sender password
+   */
+  pass: string;
 
   /**
    * @default "email.md"

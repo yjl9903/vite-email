@@ -1,8 +1,6 @@
 import type { UserConfig } from './types';
 
-export type { Receiver } from './option';
-
-export type { UserConfig };
+export type { Receiver, UserConfig } from './types';
 
 export function defineConfig(config: UserConfig) {
   return config;

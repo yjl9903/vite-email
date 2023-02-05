@@ -1,60 +1,20 @@
 import MarkdownIt from 'markdown-it';
-import { build, mergeConfig } from 'vite';
 import { debug as createDebug } from 'debug';
 
 // @ts-ignore
 import MarkdownItTitle from 'markdown-it-title';
 
-import type { UserConfig } from './types';
-
 export const REPLACER = `<!-- email -->`;
 
 const debug = createDebug('vmail:md');
 
-export interface RenderOption {
-  vite: UserConfig;
-
-  template: string;
-
-  frontmatter?: Record<string, any>;
-}
-
-export interface RenderOutput {
-  content: string;
-
-  subject?: string;
-}
-
-export async function render(
-  option: RenderOption,
-  config = { frontmatter: true }
-): Promise<RenderOutput> {
-  const ctx: any = {};
-  const output = await build(
-    mergeConfig(option.vite, {
-      plugins: [
-        createMdPlugin(ctx, option.template, option.frontmatter, config),
-        {
-          name: 'vmail:index',
-          apply: 'build',
-          transformIndexHtml(html: string) {
-            return html.replace(/<script[\s\S]*>[\s\S]*<\/script>/g, '');
-          }
-        }
-      ]
-    })
-  );
-
-  return {
-    // @ts-ignore
-    content: output.output.find((o) => o.fileName === 'index.html').source,
-    subject: ctx.title
-  };
+export interface MarkdownItOption {
+  frontmatter: boolean;
 }
 
 export function createMarkownIt(
-  frontmatter: Record<string, any> = {},
-  option = { frontmatter: true }
+  frontmatter: Record<string, string> = {},
+  option: MarkdownItOption = { frontmatter: true }
 ) {
   const markdown = new MarkdownIt({
     html: true,
@@ -98,23 +58,6 @@ export function createMarkownIt(
   }
 
   return markdown;
-}
-
-function createMdPlugin(
-  ctx: Record<string, string>,
-  template: string,
-  frontmatter: Record<string, any> = {},
-  config = { frontmatter: true }
-) {
-  const markdown = createMarkownIt(frontmatter, config);
-
-  return {
-    name: 'vmail:md',
-    apply: 'build',
-    transformIndexHtml(html: string) {
-      return html.replace(REPLACER, markdown.render(template, ctx));
-    }
-  };
 }
 
 if (import.meta.vitest) {
