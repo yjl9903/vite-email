@@ -70,7 +70,9 @@ export interface ViteEmailConfig {
 }
 
 export interface CliOption {
-  send: string | boolean;
+  dryRun: boolean;
+
+  send: string;
 
   user?: string | undefined;
 
@@ -79,5 +81,5 @@ export interface CliOption {
   /**
    * @default "email.md"
    */
-  md: string;
+  template: string;
 }

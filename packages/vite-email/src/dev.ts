@@ -3,7 +3,7 @@ import path from 'path';
 
 import sirv from 'sirv';
 import { getQuery, parseURL } from 'ufo';
-import { bold, cyan, dim } from 'kolorist';
+import { bold, cyan, dim } from '@breadc/color';
 import { createServer, mergeConfig, UserConfig } from 'vite';
 
 import { version } from '../package.json';
@@ -13,7 +13,7 @@ import { DEFAULT_INDEX_HTML } from './init';
 import { createMarkownIt, render, REPLACER } from './md';
 
 export async function dev(root: string, md: string, port: number) {
-  const option = await resolveOption(root, { send: false, md });
+  const option = await resolveOption(root, { dryRun: true, send: '', template: md });
 
   let style = '';
   let index = '';

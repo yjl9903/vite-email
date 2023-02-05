@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { version } from '../package.json';
+
 import { REPLACER } from './md';
 
 export async function init(_root?: string) {

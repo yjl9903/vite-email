@@ -1,48 +1,45 @@
-import { cac } from 'cac';
 import { debug } from 'debug';
-import { lightRed } from 'kolorist';
+import { breadc } from 'breadc';
+import { lightRed } from '@breadc/color';
+import { complete } from '@breadc/complete';
 
-import { version } from '../package.json';
+import { version, description } from '../package.json';
 
 import type { CliOption } from './types';
+
+import { dev } from './dev';
 import { init } from './init';
 import { send } from './send';
-import { dev } from './dev';
 
-const cli = cac('vmail');
+const cli = breadc('vmail', { version, description, plugins: [complete()] });
 
 cli
-  .command('[root]', 'Send Email')
-  .alias('send')
-  .option('--md <template>', 'Markdown template path', { default: 'email.md' })
-  .option('--no-send', 'Disable email sending')
-  .option('--send [receiver]', 'Send email to receiver')
+  .command('send [root]', 'Send Email')
+  .alias('')
+  .option('-t, --template <template>', 'Markdown template path', { default: 'email.md' })
+  .option('--dry-run', 'Disable email sending')
+  .option('--send <receiver>', 'Send email to receiver')
   .option('--user <user>', 'Username of your email')
   .option('--pass <pass>', 'Password of your email')
-  .action(async (root: string | undefined, option: CliOption) => {
+  .action(async (root, option: CliOption) => {
     await send(root ?? './', option);
   });
 
 cli
-  .command('dev [root]', 'Start dev server')
-  .option('--md <template>', 'Markdown template path', { default: 'email.md' })
-  .option('--port <port>', 'port to listen to', { default: 3000 })
-  .action(async (root: string | undefined, option: { port: number; md: string }) => {
-    await dev(root ?? './', option.md, option.port);
+  .command('dev [root]', 'Start Email dev server')
+  .option('-t, --template <template>', 'Markdown template path', { default: 'email.md' })
+  .option('--port <port>', 'port to listen to', { default: '3000', cast: (t) => +t })
+  .action(async (root: string | undefined, option: { port: number; template: string }) => {
+    await dev(root ?? './', option.template, option.port);
   });
 
 cli.command('init [root]', 'Init workspace').action(async (root: string | undefined) => {
   await init(root);
 });
 
-cli.version(version);
-
-cli.help();
-
 async function bootstrap() {
   try {
-    cli.parse(process.argv, { run: false });
-    await cli.runMatchedCommand();
+    await cli.run(process.argv.slice(2));
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(lightRed('Error ') + error.message);

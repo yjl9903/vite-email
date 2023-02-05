@@ -47,7 +47,7 @@ export async function resolveOption(root: string, cliOption: CliOption): Promise
 
   if (!mergedViteConfig.email) {
     mergedViteConfig.email = { enable: false };
-  } else if (cliOption.send === false) {
+  } else if (cliOption.dryRun === true) {
     mergedViteConfig.email.enable = false;
   } else {
     mergedViteConfig.email.enable = true;
@@ -95,10 +95,10 @@ export async function resolveOption(root: string, cliOption: CliOption): Promise
 
   const option: ResolvedOption = {
     vite: mergedViteConfig,
-    template: fs.readFileSync(path.join(root, cliOption.md), 'utf8'),
+    template: fs.readFileSync(path.join(root, cliOption.template), 'utf8'),
     frontmatter: emailConfig.frontmatter ?? {},
     email: mergedViteConfig.email as Required<ViteEmailConfig>,
-    entry: normalizePath(path.resolve(process.cwd(), root, cliOption.md)),
+    entry: normalizePath(path.resolve(process.cwd(), root, cliOption.template)),
     receivers
   };
 

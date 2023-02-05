@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { lightGreen, cyan, lightRed, green, red, hidden } from 'kolorist';
+import { lightGreen, cyan, lightRed, green, red, hidden } from '@breadc/color';
 
 import type { CliOption } from './types';
 import { render, REPLACER } from './md';
