@@ -232,7 +232,7 @@ if (import.meta.vitest) {
   const { it, expect } = import.meta.vitest;
 
   it('parse csv', async () => {
-    expect(await loadCSV(path.join(__dirname, '../example/data.csv'))).toMatchInlineSnapshot(`
+    expect(await loadCSV(path.join(__dirname, '../../../example/data.csv'))).toMatchInlineSnapshot(`
       [
         {
           "attachments": [],
