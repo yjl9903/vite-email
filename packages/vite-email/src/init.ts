@@ -2,7 +2,8 @@ import fs from 'fs';
 import path from 'path';
 
 import { version } from '../package.json';
-import { REPLACER } from './md';
+
+import { REPLACER } from './render';
 
 export async function init(_root?: string) {
   const root = _root ? path.resolve(process.cwd(), _root) : process.cwd();
