@@ -18,8 +18,8 @@
     "@onekuma/reset": "^0.1.4",
     "@vitejs/plugin-vue": "^4.0.0",
     "unocss": "^0.49.4",
-    "unplugin-icons": "^0.15.2",
     "vite": "^4.1.1",
+    "vite-email": "workspace:*",
     "vite-plugin-inspect": "^0.7.15"
   }
 }
