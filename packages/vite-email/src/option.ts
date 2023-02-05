@@ -1,6 +1,5 @@
 import path from 'path';
 
-import { viteSingleFile } from 'vite-plugin-singlefile';
 import { loadConfigFromFile, mergeConfig, normalizePath } from 'vite';
 
 import type { CliOption, ViteEmailConfig, UserConfig, ResolvedOption } from './types';
@@ -21,14 +20,14 @@ export async function resolveOption(root: string, cliOption: CliOption): Promise
       brotliSize: false,
       rollupOptions: {
         inlineDynamicImports: true,
-        output: {
-          manualChunks: () => 'all-in-one.js'
-        },
+        // output: {
+        //   manualChunks: () => 'all-in-one.js'
+        // },
         onwarn() {}
       }
     },
     logLevel: 'silent',
-    plugins: [viteSingleFile()]
+    plugins: []
   });
 
   if (!mergedViteConfig.email) {

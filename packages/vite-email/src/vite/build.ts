@@ -1,5 +1,6 @@
 import type { Receiver, ResolvedOption } from '../types';
 
+import { viteSingleFile } from 'vite-plugin-singlefile';
 import { readFileSync } from 'fs-extra';
 
 import { createMarkownIt, REPLACER } from '../render';
@@ -13,6 +14,7 @@ export function vmailBuildPlugin(
   const template = readFileSync(option.template, 'utf-8');
 
   return [
+    viteSingleFile(),
     createMdPlugin(ctx, template, receiver.frontmatter, config),
     {
       name: 'vmail:index',

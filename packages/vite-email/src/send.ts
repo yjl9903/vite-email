@@ -27,6 +27,8 @@ export async function send(root: string, cliOption: CliOption) {
     const { createTransport } = await import('nodemailer');
     const transport = createTransport(emailConfig);
 
+    // For dry run output
+    const outputRoot = path.join(root, '.output');
     if (!cliOption.dryRun) {
       try {
         await transport.verify();
@@ -35,6 +37,8 @@ export async function send(root: string, cliOption: CliOption) {
         return;
       }
     } else {
+      await fs.rm(outputRoot, { recursive: true, force: true });
+      await fs.ensureDir(outputRoot);
     }
 
     const failList: Array<any> = [];
@@ -68,6 +72,18 @@ export async function send(root: string, cliOption: CliOption) {
             }))
           });
         } else {
+          await fs.mkdir(path.join(outputRoot, receiver.receiver));
+          await fs.writeFile(
+            path.join(outputRoot, receiver.receiver, `${subject}.html`),
+            output.content,
+            'utf-8'
+          );
+          for (const attachment of receiver.attachments) {
+            await fs.copyFile(
+              path.join(root, attachment),
+              path.join(outputRoot, receiver.receiver, path.basename(attachment))
+            );
+          }
         }
       } catch (error) {
         bar.log(
