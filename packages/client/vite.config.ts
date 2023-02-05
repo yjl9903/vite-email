@@ -7,9 +7,19 @@ import Unocss from 'unocss/vite';
 import Icons from 'unplugin-icons/vite';
 import Inspect from 'vite-plugin-inspect';
 
+import { resolveOption, VMailServer } from '../vite-email/src';
+
+const vmailOption = await resolveOption('../../example', {
+  dryRun: true,
+  send: '',
+  user: '',
+  pass: '',
+  template: ''
+});
+
 export default defineConfig({
   base: '/__email/',
-  plugins: [vue(), Icons({ autoInstall: true }), Unocss(), Inspect()],
+  plugins: [vue(), Icons({ autoInstall: true }), Unocss(), Inspect(), VMailServer(vmailOption)],
   build: {
     outDir: path.resolve(__dirname, '../vite-email/build/client'),
     minify: true,

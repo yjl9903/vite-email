@@ -10,7 +10,7 @@ import type { ResolvedOption } from '../types';
 import { DEFAULT_INDEX_HTML } from '../init';
 import { createMarkownIt, render, REPLACER } from '../render';
 
-export async function vmailServerPlugin(option: ResolvedOption): Promise<Plugin> {
+export async function VMailServer(option: ResolvedOption): Promise<Plugin> {
   let template = '';
   let style = '';
   let index = '';
@@ -28,6 +28,7 @@ export async function vmailServerPlugin(option: ResolvedOption): Promise<Plugin>
 
   return {
     name: 'vmail:server',
+    apply: 'serve',
     async handleHotUpdate(ctx) {
       if (ctx.file === option.template) {
         template = await ctx.read();

@@ -2,7 +2,7 @@ import { build, mergeConfig } from 'vite';
 
 import type { ResolvedOption, Receiver, RenderOutput } from '../types';
 
-import { vmailBuildPlugin } from '../vite';
+import { VMailBuild } from '../vite';
 
 import type { MarkdownItOption } from './md';
 
@@ -15,7 +15,7 @@ export async function render(
 
   const output = await build(
     mergeConfig(option.vite, {
-      plugins: [vmailBuildPlugin(ctx, receiver, option, config)]
+      plugins: [VMailBuild(ctx, receiver, option, config)]
     })
   );
 

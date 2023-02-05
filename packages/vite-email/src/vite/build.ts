@@ -1,17 +1,17 @@
 import type { Receiver, ResolvedOption } from '../types';
 
+import fs from 'fs-extra';
 import { viteSingleFile } from 'vite-plugin-singlefile';
-import { readFileSync } from 'fs-extra';
 
 import { createMarkownIt, REPLACER } from '../render';
 
-export function vmailBuildPlugin(
+export function VMailBuild(
   ctx: Record<string, string>,
   receiver: Receiver,
   option: ResolvedOption,
   config = { frontmatter: true }
 ) {
-  const template = readFileSync(option.template, 'utf-8');
+  const template = fs.readFileSync(option.template, 'utf-8');
 
   return [
     viteSingleFile(),

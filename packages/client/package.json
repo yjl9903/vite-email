@@ -1,6 +1,7 @@
 {
   "name": "@vite-email/client",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "vite build",
     "dev": "vite",

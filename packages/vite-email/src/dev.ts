@@ -5,8 +5,8 @@ import { version } from '../package.json';
 
 import type { ResolvedOption } from './types';
 
+import { VMailServer } from './vite';
 import { resolveOption } from './option';
-import { vmailServerPlugin } from './vite';
 
 export async function dev(root: string, template: string, port: number) {
   const option = await resolveOption(root, {
@@ -19,7 +19,7 @@ export async function dev(root: string, template: string, port: number) {
 
   const server = await createServer(
     mergeConfig(option.vite, <UserConfig>{
-      plugins: [await vmailServerPlugin(option)]
+      plugins: [await VMailServer(option)]
     })
   );
 

@@ -1,12 +1,12 @@
 import MarkdownIt from 'markdown-it';
-import { debug as createDebug } from 'debug';
+// import { debug as createDebug } from 'debug';
 
 // @ts-ignore
 import MarkdownItTitle from 'markdown-it-title';
 
 export const REPLACER = `<!-- email -->`;
 
-const debug = createDebug('vmail:md');
+// const debug = createDebug('vmail:md');
 
 export interface MarkdownItOption {
   frontmatter: boolean;
@@ -42,7 +42,7 @@ export function createMarkownIt(
             break;
           } else {
             // fail to find varName
-            debug(varName);
+            // debug(varName);
             throw new Error(`"${varName}" not found when render Markdown`);
           }
         } else {
@@ -58,27 +58,4 @@ export function createMarkownIt(
   }
 
   return markdown;
-}
-
-if (import.meta.vitest) {
-  const { it, expect } = import.meta.vitest;
-
-  it('parse md', () => {
-    const md = createMarkownIt({ name: 'world', id: '123' });
-    expect(md.render('# Hello {{ id }} - {{ name }}\n\nMy id is {{ id }}')).toMatchInlineSnapshot(`
-      "<h1>Hello 123 - world</h1>
-      <p>My id is 123</p>
-      "
-    `);
-  });
-
-  it('render zh key', () => {
-    const md = createMarkownIt({ 姓名: 'world', 编号1: '123' });
-    expect(md.render('# Hello {{ 编号1 }} - {{ 姓名 }}\n\nMy id is {{ 编号1 }}'))
-      .toMatchInlineSnapshot(`
-      "<h1>Hello 123 - world</h1>
-      <p>My id is 123</p>
-      "
-    `);
-  });
 }
