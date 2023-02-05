@@ -48,17 +48,14 @@ describe('Loader', () => {
   });
 
   it('must have valid receiver', () => {
-    // @ts-ignore
-    expect(() => parseCSV([{ name: '123' }])).toThrowErrorMatchingInlineSnapshot(
+    expect(() => resolveDataSource([{ name: '123' }])).toThrowErrorMatchingInlineSnapshot(
       '"Get receiver fail in \\"{\\"name\\":\\"123\\"}\\""'
     );
-    // @ts-ignore
-    expect(() => parseCSV([{ receiver: '' }])).toThrowErrorMatchingInlineSnapshot(
+    expect(() => resolveDataSource([{ receiver: '' }])).toThrowErrorMatchingInlineSnapshot(
       '"Get receiver fail in \\"{\\"receiver\\":\\"\\"}\\""'
     );
     expect(() =>
-      // @ts-ignore
-      parseCSV([{ receiver: '1' }, { receiver: '1' }])
+      resolveDataSource([{ receiver: '1' }, { receiver: '1' }])
     ).toThrowErrorMatchingInlineSnapshot('"Duplicate receivers"');
   });
 
