@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
   pull_request:
     branches:
       - main
@@ -13,16 +14,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.2.2
+        uses: pnpm/action-setup@v2.2.4
+
       - name: Setup node
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
           cache: pnpm
+
       - name: Install
         run: pnpm install
+
       - name: Build
         run: pnpm build
+
       - name: Test
-        run: pnpm test
+        run: pnpm test:ci
