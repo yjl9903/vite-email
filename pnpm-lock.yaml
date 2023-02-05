@@ -76,7 +76,6 @@ importers:
       nodemailer: ^6.9.1
       prompts: ^2.4.2
       sirv: ^2.0.2
-      ufo: ^1.0.1
       vite: ^4.1.1
       vite-plugin-singlefile: 0.13.2
       vitest: 0.28.4
@@ -95,7 +94,6 @@ importers:
       nodemailer: 6.9.1
       prompts: 2.4.2
       sirv: 2.0.2
-      ufo: 1.0.1
       vite: 4.1.1_@types+node@18.11.19
       vite-plugin-singlefile: 0.13.2_vite@4.1.1
     devDependencies:
@@ -2357,6 +2355,7 @@ packages:
 
   /ufo/1.0.1:
     resolution: {integrity: sha512-boAm74ubXHY7KJQZLlXrtMz52qFvpsbOxDcZOnw/Wf+LS4Mmyu7JxmzD4tDLtUQtmZECypJ0FrCz4QIe6dvKRA==}
+    dev: true
 
   /unbuild/1.1.1:
     resolution: {integrity: sha512-HlhHj6cUPBQJmhoczQoU6dzdTFO0Jr9EiGWEZ1EwHGXlGRR6LXcKyfX3PMrkM48uWJjBWiCgTQdkFOAk3tlK6Q==}

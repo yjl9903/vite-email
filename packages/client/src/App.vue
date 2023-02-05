@@ -1,18 +1,29 @@
 <script setup lang="ts">
-import { watch, ref } from 'vue';
+import { computed, watch, ref } from 'vue';
 
 import { useStore } from './logic';
 
-const { receivers, fetch } = useStore();
+const { template, receivers, rendered, fetch } = useStore();
 
 const preview = ref('');
-const md = ref('');
+
 const update = (preview: string) => {
-  fetch(preview).then((r) => {
-    md.value = r.content;
-  });
+  fetch(preview);
 };
-watch(preview, update, { immediate: true });
+
+const content = computed(() => {
+  if (preview.value in rendered.value) {
+    console.log(rendered.value[preview.value].content);
+    return rendered.value[preview.value].content;
+  } else {
+    if (preview.value !== '') {
+      update(preview.value);
+    }
+    return template.value;
+  }
+});
+
+watch(preview, update);
 </script>
 
 <template>
@@ -35,15 +46,17 @@ watch(preview, update, { immediate: true });
     </div>
   </nav>
 
-  <div id="main" class="flex font-none">
+  <div id="main" class="flex">
     <div id="sidebar" border="r-1 base" class="h-full min-w-48 overflow-auto">
       <div v-for="r in receivers" @click="preview = r.receiver">{{ r.receiver }}</div>
     </div>
-    <div
-      v-html="md"
-      id="email"
-      :class="['h-[calc(100%-2rem)]', 'flex-grow', 'text-base', 'p-4', 'overflow-auto']"
-    ></div>
+    <div flex-auto class="h-full">
+      <div
+        v-html="content"
+        id="email"
+        :class="['h-full', 'flex-grow', 'text-base-900', 'p-4', 'overflow-auto']"
+      ></div>
+    </div>
   </div>
 </template>
 
@@ -54,18 +67,6 @@ body,
   height: 100%;
   margin: 0;
   padding: 0;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
-a:active {
-  text-decoration: none;
-}
-
-.font-none {
-  font-size: 0;
 }
 
 nav {
