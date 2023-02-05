@@ -42,7 +42,7 @@ export async function dev(root: string, md: string, port: number) {
           configureServer(server) {
             server.middlewares.use(
               '/__email',
-              sirv(path.join(__dirname, '../dist/client'), { single: true, dev: true })
+              sirv(path.join(__dirname, '../build/client'), { single: true, dev: true })
             );
 
             server.middlewares.use('/__email_list', (_req, res) => {

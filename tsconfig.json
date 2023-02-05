@@ -15,7 +15,7 @@
       "vitest/importMeta"
     ],
     "paths": {
-      "vite-email": ["./src/index.ts"]
+      "vite-email": ["./packages/vite-email/src/index.ts"]
     }
   }
 }
