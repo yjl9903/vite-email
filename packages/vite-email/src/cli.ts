@@ -13,31 +13,31 @@ import { send } from './send';
 
 const cli = breadc('vmail', { version, description, plugins: [complete()] });
 
+cli.command('init [root]', 'Init workspace').action(async (root) => {
+  await init(root);
+});
+
 cli
-  .command('send [root]', 'Send Email')
+  .command('send [root]', 'Send emails')
   .alias('')
   .option('-t, --template <template>', 'Markdown template path', { default: 'email.md' })
   .option('-s, --source <source>', 'Data source path', { default: 'data.csv' })
   .option('--dry-run', 'Disable email sending')
   .option('--send <receiver>', 'Send email to receiver', { default: '' })
-  .option('--user <user>', 'Username of your email', { default: '' })
-  .option('--pass <pass>', 'Password of your email', { default: '' })
+  .option('-u, --user <user>', 'Username of your email', { default: '' })
+  .option('-p, --pass <pass>', 'Password of your email', { default: '' })
   .action(async (root, option: CliOption) => {
     await send(root ?? './', option);
   });
 
 cli
-  .command('dev [root]', 'Start Email dev server')
+  .command('dev [root]', 'Start email dev server')
   .option('-t, --template <template>', 'Markdown template path', { default: 'email.md' })
   .option('-s, --source <source>', 'Data source path', { default: 'data.csv' })
   .option('--port <port>', 'port to listen to', { default: '3000', cast: (t) => +t })
   .action(async (root: string | undefined, option) => {
     await dev(root ?? './', option.template, option.port);
   });
-
-cli.command('init [root]', 'Init workspace').action(async (root) => {
-  await init(root);
-});
 
 async function bootstrap() {
   try {
