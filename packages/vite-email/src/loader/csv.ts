@@ -1,11 +1,13 @@
 import fs from 'fs-extra';
+import { TextDecoder } from 'node:util';
 
 import type { Receiver, ResolvedOption } from '../types';
 
 import { resolveDataSource } from './resolver';
 
 export async function loadCSV(option: ResolvedOption): Promise<Receiver[]> {
-  const content = fs.readFileSync(option.source, 'utf-8');
+  const buffer = await fs.readFile(option.source);
+  const content = new TextDecoder('utf-8', { ignoreBOM: false }).decode(buffer);
 
   const { parse } = await import('csv-parse/sync');
   const result = parse(content, {
