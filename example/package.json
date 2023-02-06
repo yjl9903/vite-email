@@ -1,4 +1,5 @@
 {
+  "name": "@vite-email/example",
   "private": true,
   "scripts": {
     "dev": "vmail dev",

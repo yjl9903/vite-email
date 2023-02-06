@@ -44,22 +44,24 @@ Here is `email.md`.
 # Hello {{ name }}
 ```
 
-Then the following content will be sent to `bot@github.com`.
+Then the following content will be rendered to HTML, and then be sent to `bot@github.com`.
 
 ```md
 # Hello Bot
 ```
 
-You can also start a dev server to preview the content of emails.
+You can start a dev server to preview the content of emails, or preview the output with `--dry-run`.
 
 ```bash
 vmail dev
+# or
+vmail send --dry-run
 ```
 
 If everything is done, send emails with a single command.
 
 ```bash
-vmail
+vmail send
 ```
 
 ## License
