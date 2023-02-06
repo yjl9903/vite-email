@@ -11,15 +11,22 @@ const update = (preview: string) => {
   fetch(preview);
 };
 
+const receiver = computed(() => {
+  if (preview.value in rendered.value) {
+    return rendered.value[preview.value].receiver;
+  } else {
+    return undefined;
+  }
+});
 const content = computed(() => {
   if (preview.value in rendered.value) {
     console.log(rendered.value[preview.value].content);
-    return rendered.value[preview.value].content;
+    return rendered.value[preview.value];
   } else {
     if (preview.value !== '') {
       update(preview.value);
     }
-    return template.value;
+    return { content: template.value };
   }
 });
 
@@ -27,7 +34,7 @@ watch(preview, update);
 </script>
 
 <template>
-  <nav class="w-screen h-[60px] flex justify-between items-center">
+  <nav class="w-screen h-[60px] flex justify-between items-center font-sans">
     <div flex items-center gap2 select-none>
       <span i-ic-outline-email text-xl></span>
       <span class="font-bold text-xl">Vite Email</span>
@@ -46,15 +53,39 @@ watch(preview, update);
     </div>
   </nav>
 
-  <div id="main" class="flex">
+  <div id="main" class="flex font-sans">
     <div id="sidebar" border="r-1 base" class="h-full min-w-48 overflow-auto">
-      <div v-for="r in receivers" @click="preview = r.receiver">{{ r.receiver }}</div>
+      <div
+        v-for="r in receivers"
+        @click="preview = r.receiver"
+        :class="preview === r.receiver && 'bg-light-400'"
+      >
+        <span>{{ r.receiver }}</span>
+      </div>
     </div>
     <div flex-auto class="h-full">
+      <div v-if="receiver" border="b-1 base" p4 class="bg-gray-100/50 space-y-1">
+        <div space-x-2>
+          <span font-bold inline-block w-28 select-none>Title</span>
+          <span>{{ receiver.title ?? content.subject }}</span>
+        </div>
+        <div space-x-2>
+          <span font-bold inline-block w-28 select-none>Receiver</span>
+          <a underline :href="`mailto:${receiver.receiver}`">{{ receiver.receiver }}</a>
+        </div>
+        <div space-x-2 v-if="receiver.attachments.length > 0">
+          <span font-bold inline-block w-28 select-none>Attachment</span>
+          <span v-for="attach in receiver.attachment">{{ attach }}</span>
+        </div>
+        <div space-x-2>
+          <span font-bold inline-block w-28 select-none>Frontmatter</span>
+          <span>{{ JSON.stringify(receiver.frontmatter) }}</span>
+        </div>
+      </div>
       <div
-        v-html="content"
+        v-html="content.content"
         id="email"
-        :class="['h-full', 'flex-grow', 'text-base-900', 'p-4', 'overflow-auto']"
+        :class="['flex-grow', 'text-base-900', 'p-4', 'overflow-auto']"
       ></div>
     </div>
   </div>
@@ -96,7 +127,7 @@ nav {
 
 #sidebar > div {
   @apply block border-0 border-b px-6 py-2 text-left font-mono text-sm;
-  @apply cursor-pointer underline-transparent;
+  @apply cursor-pointer underline-transparent select-none;
   @apply hover:bg-light-400;
   border-color: rgba(156, 163, 175, 0.3);
 }

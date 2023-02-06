@@ -33,7 +33,6 @@ export function useStore() {
     receivers,
     rendered,
     async fetch(receiver: string) {
-      console.log('query', receiver);
       hot.value?.send('vite-email:query', { receiver });
       hot.value?.on('vite-email:rendered', (data) => {
         rendered.value[data.receiver.receiver] = data;
