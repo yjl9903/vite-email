@@ -1,6 +1,6 @@
 {
   "name": "vite-email",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Send emails rendered by Vite and Markdown-It automatically",
   "keywords": [
     "vite",
