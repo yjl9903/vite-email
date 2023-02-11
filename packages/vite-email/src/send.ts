@@ -61,6 +61,13 @@ export async function send(root: string, cliOption: CliOption) {
         bar.update('send', receiver.receiver, subject);
 
         if (!cliOption.dryRun) {
+          // Check attachment
+          for (const attch of receiver.attachments) {
+            if (!fs.existsSync(attch)) {
+              throw new Error(`The attachment "${attch}" (${receiver.receiver}) does not exist`);
+            }
+          }
+
           await transport.sendMail({
             from: emailConfig.sender,
             to: receiver.receiver,
