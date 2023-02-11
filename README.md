@@ -4,7 +4,13 @@
 
 Send emails rendered by Vite and Markdown-It automatically.
 
-<img src="./screenshot.png" alt="screenshot">
+<img src="./screenshot.jpeg" alt="screenshot">
+
+## Features
+
++ 📝 Render Markdown email template using csv table data
++ 🔥 Emails dev server with HMR support powered by [Vite](https://vitejs.dev/)
++ 📧 Automatically send emails
 
 ## Installation
 
