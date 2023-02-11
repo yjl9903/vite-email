@@ -92,12 +92,16 @@ watch(preview, update);
 </template>
 
 <style>
-html,
-body,
-#app {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+html {
+  --at-apply: text-dark-500 font-sans;
+  font-weight: 400;
+  background-color: white;
+}
+
+html.dark {
+  --at-apply: text-light-500;
+  background: #222;
+  color-scheme: dark;
 }
 
 nav {
