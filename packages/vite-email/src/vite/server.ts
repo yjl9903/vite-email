@@ -1,4 +1,4 @@
-import type { Plugin, ViteDevServer } from 'vite';
+import { normalizePath, Plugin, ViteDevServer } from 'vite';
 
 import fs from 'fs-extra';
 import url from 'node:url';
@@ -106,6 +106,28 @@ export async function VMailServer(option: ResolvedOption): Promise<Plugin> {
       //     res.end(JSON.stringify({ content, subject: 'template' }, null, 2));
       //   }
       // });
+    },
+    resolveId(id) {
+      if (id === 'vite-email.css') {
+        {
+          const p = path.join(option.root, 'style.css');
+          if (fs.existsSync(p)) {
+            return normalizePath(p);
+          }
+        }
+        {
+          const p = path.join(option.root, 'src/style.css');
+          if (fs.existsSync(p)) {
+            return normalizePath(p);
+          }
+        }
+        return 'virtual:vite-email.css';
+      }
+    },
+    load(id) {
+      if (id === 'virtual:vite-email.css') {
+        return `export default {}`;
+      }
     }
   };
 }

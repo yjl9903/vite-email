@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, watch, ref } from 'vue';
 
+import 'vite-email.css';
+
 import { useStore } from './logic';
 
 const { template, receivers, rendered, fetch } = useStore();
@@ -37,7 +39,7 @@ watch(preview, update);
   <nav class="w-screen h-[60px] flex justify-between items-center font-sans">
     <div flex items-center gap2 select-none>
       <span i-ic-outline-email text-xl></span>
-      <span class="font-bold text-xl">Vite Email</span>
+      <span class="font-bold text-xl cursor-pointer" @click="preview = ''">Vite Email</span>
     </div>
 
     <div flex gap2 items-center>
@@ -79,14 +81,12 @@ watch(preview, update);
         </div>
         <div space-x-2>
           <span font-bold inline-block w-28 select-none>Frontmatter</span>
-          <span>{{ JSON.stringify(receiver.frontmatter) }}</span>
+          <span text-base-600>{{ JSON.stringify(receiver.frontmatter) }}</span>
         </div>
       </div>
-      <div
-        v-html="content.content"
-        id="email"
-        :class="['flex-grow', 'text-base-900', 'p-4', 'overflow-auto']"
-      ></div>
+      <div :class="['flex-grow', 'text-base-900', 'px4', 'overflow-auto']">
+        <div v-html="content.content" id="email" class="my2"></div>
+      </div>
     </div>
   </div>
 </template>
