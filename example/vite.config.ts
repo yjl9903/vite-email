@@ -8,11 +8,11 @@ export default defineConfig({
       user: 'yan_jl@yeah.net'
     },
     frontmatter: {
+      receiver({ name }) {
+        return `${name}@users.noreply.github.com`
+      },
       today: new Date().toLocaleDateString(),
-      author: 'XLor',
-      upperName({ name }) {
-        return name.toLocaleUpperCase();
-      }
+      author: 'XLor'
     }
   }
 });

@@ -1,3 +1,8 @@
-receiver,name
-yjl9903@vip.qq.com,XLor
-yan_jl@yeah.net,yjl
+name,site
+vue,https://vuejs.org/
+react,https://reactjs.org/
+angular,https://angular.io/
+solid,https://www.solidjs.com/
+svelte,https://svelte.dev/
+preact,https://preactjs.com/
+lit,https://lit.dev/

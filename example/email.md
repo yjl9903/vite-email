@@ -1,9 +1,7 @@
 # Hello {{ name }}
 
-Dear {{ upperName }}.
+This official site is {{ site }}
 
-Hello!
+Good luck!
 
-From {{ author }}
-
-{{ today }}
+From {{ author }}, at {{ today }}.
