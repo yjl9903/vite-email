@@ -39,8 +39,8 @@ function printDevInfo(port: number, option: ResolvedOption) {
   console.log();
   console.log(`${bold('  vite-email')} ${cyan(`v${version}`)}`);
   console.log();
-  console.log(`${dim('  Template    ')} > ${getP(option.template)}`);
-  console.log(`${dim('  Data Source ')} > ${getP(option.source)}`);
-  console.log(`${dim('  Dev Server  ')} > ${cyan(`http://localhost:${bold(port)}/__email`)}`);
+  console.log(`${dim('  Template')} > ${getP(option.template)}`);
+  console.log(`${dim('  Source  ')} > ${getP(option.source)}`);
+  console.log(`${dim('  Server  ')} > ${cyan(`http://localhost:${bold(port)}/__email`)}`);
   console.log();
 }
