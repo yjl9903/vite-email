@@ -1,3 +1,5 @@
+import * as path from 'node:path';
+
 import { bold, cyan, dim } from '@breadc/color';
 import { createServer, mergeConfig, UserConfig } from 'vite';
 
@@ -29,11 +31,16 @@ export async function dev(root: string, template: string, port: number) {
 }
 
 function printDevInfo(port: number, option: ResolvedOption) {
+  const getP = (p: string) => {
+    const f = path.relative(option.root, p);
+    return `${path.dirname(f)}/${bold(path.basename(f))}`;
+  };
+
   console.log();
   console.log(`${bold('  vite-email')} ${cyan(`v${version}`)}`);
   console.log();
-  console.log(`${dim('  Template    ')} > ${option.template}`);
-  console.log(`${dim('  Data Source ')} > ${option.source}`);
+  console.log(`${dim('  Template    ')} > ${getP(option.template)}`);
+  console.log(`${dim('  Data Source ')} > ${getP(option.source)}`);
   console.log(`${dim('  Dev Server  ')} > ${cyan(`http://localhost:${bold(port)}/__email`)}`);
   console.log();
 }

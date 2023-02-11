@@ -83,7 +83,7 @@ export async function resolveOption(root: string, cliOption: CliOption): Promise
   }
 
   const option: ResolvedOption = {
-    root: normalizePath(path.resolve(process.cwd(), root, cliOption.template)),
+    root: normalizePath(path.resolve(process.cwd(), root)),
     vite: mergedViteConfig,
     template: normalizePath(path.resolve(process.cwd(), root, cliOption.template)),
     source: normalizePath(path.resolve(process.cwd(), root, emailConfig.source)),
